@@ -21,18 +21,26 @@ from notcurses.notcurses_api import (NotcursesCell, NotcursesInitOptions,
                                      notcurses_mouse_disable, notcurses_render,
                                      notcurses_stop, notcurses_top,)
 
+
+# Very simple example. Print Hello world!
+
+# Generate Init options. Not required as None can be passed as NULL pointer.
 test_options = NotcursesInitOptions()
 
-
+# Initialize  notcurses. i is the void pointer to notcurses handle
 i = notcurses_init(pointer(test_options), 0)
-notcurses_mouse_disable(i)
 
+notcurses_mouse_disable(i)
+# Get top plane
 top_plane = notcurses_top(i)
 
 for character in 'Hello, world!':
+    # For every character in Hello World create a new cell
     test_cell = NotcursesCell(gcluster=ord(character))
+    # And put it to current cursor
     ncplane_putc_yx(top_plane, -1, -1, pointer(test_cell))
 
+# Render
 notcurses_render(i)
 
 sleep(5)
