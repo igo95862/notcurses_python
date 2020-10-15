@@ -29,7 +29,7 @@ libnotcurses = CDLL(find_library('notcurses'))
 def import_from_cdll(
     func_name: str,
     arg_types_tuple: Tuple[Type[Any], ...],
-    return_type: Type[Any],
+    return_type: Optional[Type[Any]] = None,
 ) -> Callable[..., Any]:
     c_function = getattr(libnotcurses, func_name)
     c_function.argtypes = arg_types_tuple
@@ -137,4 +137,43 @@ notcurses_stop: Callable[
     return_type=c_int,
 )
 
+notcurses_version = import_from_cdll(
+    func_name='notcurses_version',
+    arg_types_tuple=(),
+    return_type=c_char_p,
+)
+
+ncplane_set_bg_rgb8_clipped: Callable[
+    [NcPlane, int, int, int],
+    None
+] = import_from_cdll(
+    func_name='ncplane_set_bg_rgb8_clipped',
+    arg_types_tuple=(c_void_p, c_int, c_int, c_int),
+)
+
+ncplane_set_fg_rgb8_clipped: Callable[
+    [NcPlane, int, int, int],
+    None
+] = import_from_cdll(
+    func_name='ncplane_set_fg_rgb8_clipped',
+    arg_types_tuple=(c_void_p, c_int, c_int, c_int),
+)
+
+ncplane_set_fg_rgb8: Callable[
+    [NcPlane, int, int, int],
+    None
+] = import_from_cdll(
+    func_name='ncplane_set_fg_rgb8',
+    arg_types_tuple=(c_void_p, c_int, c_int, c_int),
+    return_type=c_int,
+)
+
+ncplane_channels: Callable[
+    [NcPlane],
+    int
+] = import_from_cdll(
+    func_name='ncplane_channels',
+    arg_types_tuple=(c_void_p, ),
+    return_type=c_uint64,
+)
 # endregion Functions
