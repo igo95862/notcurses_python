@@ -17,10 +17,12 @@ from ctypes import pointer
 from time import sleep
 
 from notcurses.notcurses_api import (NotcursesCell, NotcursesInitOptions,
-                                     ncplane_putc_yx, notcurses_init,
-                                     notcurses_mouse_disable, notcurses_render,
-                                     notcurses_stop, notcurses_top,)
-
+                                     ncplane_putc_yx,
+                                     ncplane_channels,
+                                     ncplane_set_bg_rgb8_clipped,
+                                     notcurses_init, notcurses_mouse_disable,
+                                     notcurses_render, notcurses_stop,
+                                     notcurses_top)
 
 # Very simple example. Print Hello world!
 
@@ -34,9 +36,15 @@ notcurses_mouse_disable(i)
 # Get top plane
 top_plane = notcurses_top(i)
 
+ncplane_set_bg_rgb8_clipped(top_plane, 255, 0, 0)
+channel_color = ncplane_channels(top_plane)
+
 for character in 'Hello, world!':
     # For every character in Hello World create a new cell
-    test_cell = NotcursesCell(gcluster=ord(character))
+    test_cell = NotcursesCell(
+        gcluster=ord(character),
+        channels=channel_color,
+    )
     # And put it to current cursor
     ncplane_putc_yx(top_plane, -1, -1, pointer(test_cell))
 
