@@ -224,6 +224,33 @@ ncplane_channels: Callable[
     return_type=c_uint64,
 )
 
+# region ncplane_*
+
+
+ncplane_x: Callable[
+    [NcPlane],
+    int
+] = import_from_cdll(
+    func_name='ncplane_y',
+    arg_types_tuple=(c_void_p, ),
+    return_type=c_int,
+)
+
+
+ncplane_y: Callable[
+    [NcPlane],
+    int
+] = import_from_cdll(
+    func_name='ncplane_y',
+    arg_types_tuple=(c_void_p, ),
+    return_type=c_int,
+)
+
+# ncplane_yx
+
+# endregion ncplane_*
+
+
 # region notcurses_
 notcurses_at_yx: Callable[
     [NotcursesContext, int, int, StyleMask, Channels],
