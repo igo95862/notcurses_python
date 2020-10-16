@@ -16,12 +16,12 @@
 
 from __future__ import annotations
 
-from ctypes import (CDLL, POINTER, Structure, c_char_p, c_int, c_size_t,
-                    c_uint, c_uint8, c_uint16, c_uint32, c_uint64, c_void_p,
-                    c_wchar_p, pointer, c_int64)
+from ctypes import (CDLL, POINTER, Structure, c_char_p, c_int, c_int64,
+                    c_size_t, c_uint, c_uint8, c_uint16, c_uint32, c_uint64,
+                    c_void_p, c_wchar, c_wchar_p, pointer, c_bool)
 from ctypes.util import find_library
-from typing import Any, Callable, NewType, Optional, Tuple, Type, cast
 from enum import IntEnum, auto
+from typing import Any, Callable, NewType, Optional, Tuple, Type, cast
 
 libnotcurses = CDLL(find_library('notcurses'))
 
@@ -115,6 +115,18 @@ class NotcursesOptions(Structure):
     ]
 
 
+class NotcursesInput(Structure):
+    _fields_ = [
+        ('id', c_wchar),
+        ('y', c_int),
+        ('x', c_int),
+        ('alt', c_bool),
+        ('shift', c_bool),
+        ('ctrl', c_bool),
+        ('seqnum', c_uint64),
+    ]
+
+
 class Palette256(Structure):
     _fields_ = [
         ('chans', c_uint32 * NCPALETTESIZE),
@@ -127,6 +139,8 @@ Palette256Pointer = POINTER(Palette256)
 
 NotcursesContext = NewType('NotcursesContext', c_void_p)
 NcPlane = NewType('NcPlane', c_void_p)
+StyleMask = NewType('StyleMask', c_uint16)
+Channels = NewType('Channels', c_uint64)
 
 
 # endregion NewType
@@ -211,16 +225,111 @@ ncplane_channels: Callable[
 )
 
 # region notcurses_
+notcurses_at_yx: Callable[
+    [NotcursesContext, int, int, StyleMask, Channels],
+    NcPlane
+] = import_from_cdll(
+    func_name='notcurses_at_yx',
+    arg_types_tuple=(c_void_p, c_int, c_int, c_uint16, c_uint64),
+    return_type=c_char_p,
+)
 
-# notcurses_getc
-
-notcurses_getc: Callable[
+notcurses_bottom: Callable[
     [NotcursesContext],
     NcPlane
 ] = import_from_cdll(
-    func_name='notcurses_getc',
-    arg_types_tuple=(c_void_p, c_void_p,),
+    func_name='notcurses_bottom',
+    arg_types_tuple=(c_void_p, ),
     return_type=c_void_p,
+)
+
+notcurses_canchangecolor: Callable[
+    [NotcursesContext],
+    bool
+] = import_from_cdll(
+    func_name='notcurses_canchangecolor',
+    arg_types_tuple=(c_void_p, ),
+    return_type=c_bool,
+)
+
+notcurses_canfade: Callable[
+    [NotcursesContext],
+    bool
+] = import_from_cdll(
+    func_name='notcurses_canfade',
+    arg_types_tuple=(c_void_p, ),
+    return_type=c_bool,
+)
+
+notcurses_cansixel: Callable[
+    [NotcursesContext],
+    bool
+] = import_from_cdll(
+    func_name='notcurses_cansixel',
+    arg_types_tuple=(c_void_p, ),
+    return_type=c_bool,
+)
+
+notcurses_cantruecolor: Callable[
+    [NotcursesContext],
+    bool
+] = import_from_cdll(
+    func_name='notcurses_cantruecolor',
+    arg_types_tuple=(c_void_p, ),
+    return_type=c_bool,
+)
+
+notcurses_canutf8: Callable[
+    [NotcursesContext],
+    bool
+] = import_from_cdll(
+    func_name='notcurses_canutf8',
+    arg_types_tuple=(c_void_p, ),
+    return_type=c_bool,
+)
+
+notcurses_cursor_disable: Callable[
+    [NotcursesContext],
+    int
+] = import_from_cdll(
+    func_name='notcurses_cursor_disable',
+    arg_types_tuple=(c_void_p, ),
+    return_type=c_int,
+)
+
+notcurses_cursor_enable: Callable[
+    [NotcursesContext, int, int],
+    int
+] = import_from_cdll(
+    func_name='notcurses_cursor_enable',
+    arg_types_tuple=(c_void_p, c_int, c_int),
+    return_type=c_int,
+)
+
+notcurses_debug: Callable[
+    [NotcursesContext, c_int],
+    None
+] = import_from_cdll(
+    func_name='notcurses_debug',
+    arg_types_tuple=(c_void_p, c_int),
+)
+
+notcurses_drop_planes: Callable[
+    [NotcursesContext],
+    None
+] = import_from_cdll(
+    func_name='notcurses_drop_planes',
+    arg_types_tuple=(c_void_p, ),
+)
+
+# HACK: make sigmask and timespec NULL for now
+notcurses_getc: Callable[
+    [NotcursesContext, None, None, pointer[NotcursesInput]],
+    int
+] = import_from_cdll(
+    func_name='notcurses_getc',
+    arg_types_tuple=(c_void_p, c_void_p, c_void_p, c_void_p),
+    return_type=c_wchar,
 )
 
 notcurses_init: Callable[
