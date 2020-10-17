@@ -14,8 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+class NcPlane:
+    def putstr(self, string: str) -> int:
+        ...
+
+
 class NotcursesContext:
-    ...
+    def get_std_plane(self) -> NcPlane:
+        ...
+
+    def render(self) -> None:
+        ...
 
 
 def get_notcurses_version() -> str:
