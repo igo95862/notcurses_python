@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+class NotcursesContext:
+    ...
+
+
 def get_notcurses_version() -> str:
     """Returns notcurses version from library"""
     ...

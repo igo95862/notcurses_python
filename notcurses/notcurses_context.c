@@ -18,6 +18,40 @@ limitations under the License.
 #include <Python.h>
 #include <notcurses/notcurses.h>
 
+typedef struct
+{
+    PyObject_HEAD;
+    struct notcurses *notcurses_context_ptr;
+} NotcursesContextObject;
+
+static PyObject *
+NotcursesContext_dealloc(NotcursesContextObject *self)
+{
+    if (!notcurses_stop(self->notcurses_context_ptr))
+        return NULL;
+}
+
+static PyObject *
+NotcursesContext_init(NotcursesContextObject *self, PyObject *args, PyObject *kwds)
+{
+    static char *keywords[] = {NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "", keywords))
+        return -1;
+    self->notcurses_context_ptr = notcurses_init(NULL, NULL);
+}
+
+static PyTypeObject NotcursesContextType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+        .tp_name = "notcurses.notcurses_context.NotcursesContext",
+    .tp_doc = "Notcurses Context",
+    .tp_basicsize = sizeof(NotcursesContextObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PyType_GenericNew,
+    .tp_init = (initproc)NotcursesContext_init,
+    .tp_dealloc = (destructor)NotcursesContext_dealloc,
+};
+
 static PyObject *
 get_notcurses_version_str(PyObject *self, PyObject *args)
 {
@@ -30,11 +64,11 @@ static PyMethodDef NotcursesContextMethods[] = {
     {NULL, NULL, 0, NULL},
 };
 
-static struct PyModuleDef notcurses_context_module = {
+static struct PyModuleDef NotcursesContextModule = {
     PyModuleDef_HEAD_INIT,
-    "notcurses_context", /* name of module */
-    NULL,                /* module documentation, may be NULL */
-    -1,                  /* size of per-interpreter state of the module,
+    .m_name = "NotcursesContext",  /* name of module */
+    .m_doc = "Notcurses Context.", /* module documentation, may be NULL */
+    .m_size = -1,                  /* size of per-interpreter state of the module,
                  or -1 if the module keeps state in global variables. */
     NotcursesContextMethods,
 };
@@ -42,5 +76,21 @@ static struct PyModuleDef notcurses_context_module = {
 PyMODINIT_FUNC
 PyInit_notcurses_context(void)
 {
-    return PyModule_Create(&notcurses_context_module);
+    PyObject *py_module; // create the module
+    if (PyType_Ready(&NotcursesContextType) < 0)
+        return NULL;
+
+    py_module = PyModule_Create(&NotcursesContextModule);
+    if (py_module == NULL)
+        return NULL;
+
+    Py_INCREF(&NotcursesContextType);
+    if (PyModule_AddObject(py_module, "NotcursesContext", (PyObject *)&NotcursesContextType) < 0)
+    {
+        Py_DECREF(&NotcursesContextType);
+        Py_DECREF(py_module);
+        return NULL;
+    }
+
+    return py_module;
 }
