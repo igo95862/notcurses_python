@@ -25,7 +25,7 @@ typedef struct
 } NcPlaneObject;
 
 static PyObject *
-ncplane_put_str(NcPlaneObject *self, PyObject *args, PyObject *kwargs)
+NcPlane_put_str(NcPlaneObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *keywords[] = {"string", "y_pos", "x_pos", NULL};
     const char *string = "Hello, World!";
@@ -58,7 +58,7 @@ ncplane_put_str(NcPlaneObject *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyMethodDef NcPlane_methods[] = {
-    {"putstr", (PyCFunctionWithKeywords)ncplane_put_str, METH_VARARGS | METH_KEYWORDS, "Put string at y,x"},
+    {"putstr", (PyCFunctionWithKeywords)NcPlane_put_str, METH_VARARGS | METH_KEYWORDS, "Put string at y,x"},
     {NULL, NULL, 0, NULL},
 };
 
