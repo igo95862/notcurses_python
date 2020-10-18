@@ -20,6 +20,9 @@ class NcPlane:
 
 
 class NotcursesContext:
+    def __init__(self, fileno: int = -1):
+        ...
+
     def get_std_plane(self) -> NcPlane:
         ...
 

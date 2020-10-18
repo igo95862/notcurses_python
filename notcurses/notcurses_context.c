@@ -28,7 +28,7 @@ static PyObject *
 ncplane_put_str(NcPlaneObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *keywords[] = {"string", "y_pos", "x_pos", NULL};
-    char *string = "Hello, World!";
+    const char *string = "Hello, World!";
     int y_pos = -1;
     int x_pos = -1;
     if (self->ncplane_ptr == NULL)
@@ -90,8 +90,10 @@ NotcursesContext_dealloc(NotcursesContextObject *self)
 static int
 NotcursesContext_init(NotcursesContextObject *self, PyObject *args, PyObject *kwargs)
 {
-    static char *keywords[] = {NULL};
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "", keywords))
+    static char *keywords[] = {"fileno", NULL};
+    int file_descriptor = -1;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|i", keywords,
+                                     &file_descriptor))
     {
         PyErr_SetString(PyExc_RuntimeError, "Failed to parse init arguments");
         return -1;
@@ -105,7 +107,14 @@ NotcursesContext_init(NotcursesContextObject *self, PyObject *args, PyObject *kw
         .margin_b = 0,
         .margin_l = 0,
     };
-    self->notcurses_context_ptr = notcurses_init(&(self->options), NULL);
+
+    FILE *file_to_notcurses = NULL;
+    if (file_descriptor > -1)
+    {
+        file_to_notcurses = fdopen(file_descriptor, "w");
+    }
+
+    self->notcurses_context_ptr = notcurses_init(&(self->options), file_to_notcurses);
     if (self->notcurses_context_ptr != NULL)
     {
         return 0;
