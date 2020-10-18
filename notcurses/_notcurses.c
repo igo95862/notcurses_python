@@ -107,7 +107,7 @@ static PyMethodDef NcPlane_methods[] = {
 
 static PyTypeObject NcPlaneType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-        .tp_name = "notcurses.notcurses_context.NcPlane",
+        .tp_name = "notcurses._notcurses._NcPlane",
     .tp_doc = "Notcurses Plane",
     .tp_basicsize = sizeof(NcPlaneObject),
     .tp_itemsize = 0,
@@ -194,7 +194,7 @@ static PyMethodDef NotcursesContext_methods[] = {
 
 static PyTypeObject NotcursesContextType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-        .tp_name = "notcurses.notcurses_context.NotcursesContext",
+        .tp_name = "notcurses._notcurses._NotcursesContext",
     .tp_doc = "Notcurses Context",
     .tp_basicsize = sizeof(NotcursesContextObject),
     .tp_itemsize = 0,
@@ -227,7 +227,7 @@ static struct PyModuleDef NotcursesModule = {
 };
 
 PyMODINIT_FUNC
-PyInit_notcurses_context(void)
+PyInit__notcurses(void)
 {
     PyObject *py_module; // create the module
     if (PyType_Ready(&NotcursesContextType) < 0)
@@ -241,7 +241,7 @@ PyInit_notcurses_context(void)
         return NULL;
 
     Py_INCREF(&NotcursesContextType);
-    if (PyModule_AddObject(py_module, "NotcursesContext", (PyObject *)&NotcursesContextType) < 0)
+    if (PyModule_AddObject(py_module, "_NotcursesContext", (PyObject *)&NotcursesContextType) < 0)
     {
         Py_DECREF(&NotcursesContextType);
         Py_DECREF(py_module);
@@ -249,7 +249,7 @@ PyInit_notcurses_context(void)
     }
 
     Py_INCREF(&NcPlaneType);
-    if (PyModule_AddObject(py_module, "NcPlane", (PyObject *)&NcPlaneType) < 0)
+    if (PyModule_AddObject(py_module, "_NcPlane", (PyObject *)&NcPlaneType) < 0)
     {
         Py_DECREF(&NcPlaneType);
         Py_DECREF(py_module);

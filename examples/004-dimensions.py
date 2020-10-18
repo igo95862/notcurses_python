@@ -15,17 +15,15 @@
 # limitations under the License.
 from time import sleep
 
-from notcurses.notcurses_context import NotcursesContext
+from notcurses import get_std_plane
 
-ncontx = NotcursesContext()
-
-std_plane = ncontx.get_std_plane()
+std_plane = get_std_plane()
 
 red = 0x80
 green = 0x80
 blue = 0x80
 
-y_dimension, x_dimension = std_plane.get_dimensions()
+y_dimension, x_dimension = std_plane.dimensions
 
 for y in range(y_dimension):
     for x in range(x_dimension):
@@ -36,6 +34,6 @@ for y in range(y_dimension):
         green = (green + 2) % 256
         red = (red + 2) % 256
 
-ncontx.render()
+std_plane.render()
 
 sleep(5)

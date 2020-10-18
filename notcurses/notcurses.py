@@ -15,32 +15,32 @@
 # limitations under the License.
 from typing import Tuple
 
+from ._notcurses import _NcPlane, _NotcursesContext
+
 
 class NcPlane:
-    def get_dimensions(self) -> Tuple[int, int]:
-        ...
+    def __init__(self, _nc_plane: _NcPlane,
+                 _notcurses_context: _NotcursesContext):
+        self._nc_plane = _nc_plane
+        self._notcurses_context = _notcurses_context
 
     def putstr(self, string: str, y_pos: int = -1, x_pos: int = -1) -> int:
-        ...
+        return self._nc_plane.putstr(string, y_pos, x_pos)
 
     def set_background_color(self, red: int, green: int, blue: int) -> None:
-        ...
+        self._nc_plane.set_background_color(red, green, blue)
 
     def set_foreground_color(self, red: int, green: int, blue: int) -> None:
-        ...
-
-
-class NotcursesContext:
-    def __init__(self, fileno: int = -1):
-        ...
-
-    def get_std_plane(self) -> NcPlane:
-        ...
+        self._nc_plane.set_foreground_color(red, green, blue)
 
     def render(self) -> None:
-        ...
+        self._notcurses_context.render()
+
+    @property
+    def dimensions(self) -> Tuple[int, int]:
+        return self._nc_plane.get_dimensions()
 
 
-def get_notcurses_version() -> str:
-    """Returns notcurses version from library"""
-    ...
+def get_std_plane() -> NcPlane:
+    nctx = _NotcursesContext()
+    return NcPlane(nctx.get_std_plane(), nctx)
