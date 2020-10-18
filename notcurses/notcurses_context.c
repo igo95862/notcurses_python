@@ -172,7 +172,7 @@ static PyObject *
 NotcursesContext_render(NotcursesContextObject *self, PyObject *Py_UNUSED(ignored))
 {
     notcurses_render(self->notcurses_context_ptr);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyMethodDef NotcursesContext_methods[] = {
