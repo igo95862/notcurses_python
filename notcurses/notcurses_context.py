@@ -15,7 +15,13 @@
 # limitations under the License.
 
 class NcPlane:
-    def putstr(self, string: str) -> int:
+    def putstr(self, string: str, y_pos: int = -1, x_pos: int = -1) -> int:
+        ...
+
+    def set_background_color(self, red: int, green: int, blue: int) -> None:
+        ...
+
+    def set_foreground_color(self, red: int, green: int, blue: int) -> None:
         ...
 
 

@@ -25,6 +25,36 @@ typedef struct
 } NcPlaneObject;
 
 static PyObject *
+NcPlane_set_background_rgb(NcPlaneObject *self, PyObject *args)
+{
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    if (!PyArg_ParseTuple(args, "iii", &red, &green, &blue))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse arguments");
+        return NULL;
+    }
+    ncplane_set_bg_rgb8_clipped(self->ncplane_ptr, red, green, blue);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+NcPlane_set_foreground_rgb(NcPlaneObject *self, PyObject *args)
+{
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    if (!PyArg_ParseTuple(args, "iii", &red, &green, &blue))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse arguments");
+        return NULL;
+    }
+    ncplane_set_fg_rgb8_clipped(self->ncplane_ptr, red, green, blue);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
 NcPlane_put_str(NcPlaneObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *keywords[] = {"string", "y_pos", "x_pos", NULL};
@@ -58,6 +88,8 @@ NcPlane_put_str(NcPlaneObject *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyMethodDef NcPlane_methods[] = {
+    {"set_background_color", (PyCFunction)NcPlane_set_background_rgb, METH_VARARGS, "Set background color to RGB"},
+    {"set_foreground_color", (PyCFunction)NcPlane_set_foreground_rgb, METH_VARARGS, "Set foreground color to RGB"},
     {"putstr", (PyCFunctionWithKeywords)NcPlane_put_str, METH_VARARGS | METH_KEYWORDS, "Put string at y,x"},
     {NULL, NULL, 0, NULL},
 };
