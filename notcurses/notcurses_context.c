@@ -25,6 +25,16 @@ typedef struct
 } NcPlaneObject;
 
 static PyObject *
+NcPlane_get_dimensions(NcPlaneObject *self, PyObject *args)
+{
+    int x_dimension = 0;
+    int y_dimension = 0;
+    ncplane_dim_yx(self->ncplane_ptr, &y_dimension, &x_dimension);
+
+    return PyTuple_Pack(2, PyLong_FromLong(y_dimension), PyLong_FromLong(x_dimension));
+}
+
+static PyObject *
 NcPlane_set_background_rgb(NcPlaneObject *self, PyObject *args)
 {
     int red = 0;
@@ -88,6 +98,7 @@ NcPlane_put_str(NcPlaneObject *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyMethodDef NcPlane_methods[] = {
+    {"get_dimensions", (PyCFunction)NcPlane_get_dimensions, METH_NOARGS, "Get plane y,x dimenstions"},
     {"set_background_color", (PyCFunction)NcPlane_set_background_rgb, METH_VARARGS, "Set background color to RGB"},
     {"set_foreground_color", (PyCFunction)NcPlane_set_foreground_rgb, METH_VARARGS, "Set foreground color to RGB"},
     {"putstr", (PyCFunctionWithKeywords)NcPlane_put_str, METH_VARARGS | METH_KEYWORDS, "Put string at y,x"},
