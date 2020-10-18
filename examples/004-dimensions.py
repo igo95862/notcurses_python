@@ -30,9 +30,14 @@ for y in range(y_dimension):
         std_plane.set_foreground_color(red, green, blue)
         std_plane.set_background_color(red, green, blue)
         std_plane.putstr('X', y_pos=y, x_pos=x)
-        blue = (blue + 2) % 256
-        green = (green + 2) % 256
-        red = (red + 2) % 256
+        blue += 2
+        if blue == 256:
+            blue = 0
+            green += 2
+            if green == 256:
+                green = 0
+                red = (red + 2) % 256
+
 
 std_plane.render()
 
