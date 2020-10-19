@@ -264,16 +264,16 @@ typedef struct
 {
     PyObject_HEAD;
     struct ncdirect *ncdirect_ptr;
-} NcDirecttObject;
+} NcDirectObject;
 
 static void
-NcDirect_dealloc(NcDirecttObject *self)
+NcDirect_dealloc(NcDirectObject *self)
 {
     ncdirect_stop(self->ncdirect_ptr);
 }
 
 static PyObject *
-NcDirect_putstr(NcDirecttObject *self, PyObject *args)
+NcDirect_putstr(NcDirectObject *self, PyObject *args)
 {
     const char *string = NULL;
     const NcChannelsObject *channels_object = NULL;
@@ -299,8 +299,48 @@ NcDirect_putstr(NcDirecttObject *self, PyObject *args)
     }
 }
 
+static PyObject *
+NcDirect_disable_cursor(NcDirectObject *self, PyObject *args)
+{
+    if (!PyArg_ParseTuple(args, ""))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse NcDirect_disable_cursor arguments");
+        return NULL;
+    }
+
+    if (!ncdirect_cursor_disable(self->ncdirect_ptr))
+    {
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to disable cursor");
+        return NULL;
+    }
+}
+
+static PyObject *
+NcDirect_enable_cursor(NcDirectObject *self, PyObject *args)
+{
+    if (!PyArg_ParseTuple(args, ""))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse NcDirect_disable_cursor arguments");
+        return NULL;
+    }
+
+    if (!ncdirect_cursor_enable(self->ncdirect_ptr))
+    {
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to disable cursor");
+        return NULL;
+    }
+}
+
 static int
-NcDirect_init(NcDirecttObject *self, PyObject *args, PyObject *kwargs)
+NcDirect_init(NcDirectObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *keywords[] = {NULL};
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "", keywords))
@@ -322,6 +362,8 @@ NcDirect_init(NcDirecttObject *self, PyObject *args, PyObject *kwargs)
 
 static PyMethodDef NcDirect_methods[] = {
     {"putstr", (PyCFunction)NcDirect_putstr, METH_VARARGS, "Put string on the direct plane."},
+    {"disable_cursor", (PyCFunction)NcDirect_disable_cursor, METH_VARARGS, "Disable cursor of the direct plane."},
+    {"enable_cursor", (PyCFunction)NcDirect_enable_cursor, METH_VARARGS, "Enable cursor of the direct plane."},
     {NULL, NULL, 0, NULL},
 };
 
@@ -329,7 +371,7 @@ static PyTypeObject NcDirectType = {
     PyVarObject_HEAD_INIT(NULL, 0)
         .tp_name = "notcurses._notcurses._NcDirect",
     .tp_doc = "Notcurses Direct",
-    .tp_basicsize = sizeof(NcDirecttObject),
+    .tp_basicsize = sizeof(NcDirectObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_new = PyType_GenericNew,

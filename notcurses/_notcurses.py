@@ -52,6 +52,12 @@ class _NcDirect:
                channels: Optional[_NcChannels] = None) -> None:
         ...
 
+    def disable_cursor(self) -> None:
+        ...
+
+    def enable_cursor(self) -> None:
+        ...
+
 
 class _NcChannels:
     def set_background_color(self, red: int, green: int, blue: int) -> None:
