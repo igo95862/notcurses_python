@@ -13,9 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
-from ._notcurses import _NcPlane, _NotcursesContext
+from ._notcurses import _NcChannels, _NcDirect, _NcPlane, _NotcursesContext
 
 
 class NcPlane:
@@ -50,3 +50,18 @@ def get_std_plane() -> NcPlane:
         _default_context = _NotcursesContext()
 
     return NcPlane(_default_context.get_std_plane(), _default_context)
+
+
+class NcDirect:
+    def __init__(self) -> None:
+        self._nc_direct = _NcDirect()
+        self._default_channels = _NcChannels()
+
+    def putstr(self, string: str) -> None:
+        self._nc_direct.putstr(string, self._default_channels)
+
+    def set_background_color(self, red: int, green: int, blue: int) -> None:
+        self._default_channels.set_background_color(red, green, blue)
+
+    def set_foreground_color(self, red: int, green: int, blue: int) -> None:
+        self._default_channels.set_foreground_color(red, green, blue)
