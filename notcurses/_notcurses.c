@@ -17,6 +17,7 @@ limitations under the License.
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <notcurses/notcurses.h>
+#include <notcurses/direct.h>
 
 typedef struct
 {
@@ -205,6 +206,78 @@ static PyTypeObject NotcursesContextType = {
     .tp_methods = NotcursesContext_methods,
 };
 
+typedef struct
+{
+    PyObject_HEAD;
+    struct ncdirect *ncdirect_ptr;
+} NcDirecttObject;
+
+static void
+NcDirect_dealloc(NcDirecttObject *self)
+{
+    ncdirect_stop(self->ncdirect_ptr);
+}
+
+static PyObject *
+NcDirect_putstr(NcDirecttObject *self, PyObject *args)
+{
+    const char *string = NULL;
+    if (!PyArg_ParseTuple(args, "s", &string))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse NcDirect_putstr arguments");
+        return NULL;
+    }
+    int return_code = ncdirect_putstr(self->ncdirect_ptr, 0, string);
+    if (return_code >= 0)
+    {
+        return PyLong_FromLong(return_code);
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to put string on NcDirect");
+        return NULL;
+    }
+}
+
+static int
+NcDirect_init(NcDirecttObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *keywords[] = {NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "", keywords))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse init arguments");
+        return -1;
+    }
+    self->ncdirect_ptr = ncdirect_init(NULL, NULL, 0);
+    if (self->ncdirect_ptr == NULL)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to initialize NcDirect");
+        return -1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+static PyMethodDef NcDirect_methods[] = {
+    {"putstr", (PyCFunction)NcDirect_putstr, METH_VARARGS, "Put string on the direct plane."},
+    {NULL, NULL, 0, NULL},
+};
+
+static PyTypeObject NcDirectType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+        .tp_name = "notcurses._notcurses._NcDirect",
+    .tp_doc = "Notcurses Direct",
+    .tp_basicsize = sizeof(NcDirecttObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PyType_GenericNew,
+    .tp_init = (initproc)NcDirect_init,
+    .tp_dealloc = (destructor)NcDirect_dealloc,
+    .tp_methods = NcDirect_methods,
+};
+
 static PyObject *
 get_notcurses_version_str(PyObject *self, PyObject *args)
 {
@@ -236,6 +309,9 @@ PyInit__notcurses(void)
     if (PyType_Ready(&NcPlaneType) < 0)
         return NULL;
 
+    if (PyType_Ready(&NcDirectType) < 0)
+        return NULL;
+
     py_module = PyModule_Create(&NotcursesModule);
     if (py_module == NULL)
         return NULL;
@@ -252,6 +328,14 @@ PyInit__notcurses(void)
     if (PyModule_AddObject(py_module, "_NcPlane", (PyObject *)&NcPlaneType) < 0)
     {
         Py_DECREF(&NcPlaneType);
+        Py_DECREF(py_module);
+        return NULL;
+    }
+
+    Py_INCREF(&NcDirectType);
+    if (PyModule_AddObject(py_module, "_NcDirect", (PyObject *)&NcDirectType) < 0)
+    {
+        Py_DECREF(&NcDirectType);
         Py_DECREF(py_module);
         return NULL;
     }

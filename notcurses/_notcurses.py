@@ -44,3 +44,8 @@ class _NotcursesContext:
 def get_notcurses_version() -> str:
     """Returns notcurses version from library"""
     ...
+
+
+class _NcDirect:
+    def putstr(self, string: str) -> None:
+        ...
