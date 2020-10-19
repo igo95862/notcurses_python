@@ -52,16 +52,11 @@ def get_std_plane() -> NcPlane:
     return NcPlane(_default_context.get_std_plane(), _default_context)
 
 
-class NcDirect:
-    def __init__(self) -> None:
-        self._nc_direct = _NcDirect()
-        self._default_channels = _NcChannels()
+class NcChannels(_NcChannels):
+    ...
 
-    def putstr(self, string: str) -> None:
-        self._nc_direct.putstr(string, self._default_channels)
 
-    def set_background_color(self, red: int, green: int, blue: int) -> None:
-        self._default_channels.set_background_color(red, green, blue)
-
-    def set_foreground_color(self, red: int, green: int, blue: int) -> None:
-        self._default_channels.set_foreground_color(red, green, blue)
+class NcDirect(_NcDirect):
+    @property
+    def dimensions(self) -> Tuple[int, int]:
+        return self._get_dim_y(), self._get_dim_x()

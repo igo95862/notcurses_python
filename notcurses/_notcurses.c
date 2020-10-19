@@ -67,7 +67,7 @@ static PyTypeObject NcChannelsType = {
     .tp_doc = "Notcurses Channels",
     .tp_basicsize = sizeof(NcChannelsObject),
     .tp_itemsize = 0,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
     .tp_new = PyType_GenericNew,
     .tp_init = NULL,
     .tp_methods = NcChannels_methods,
@@ -273,6 +273,28 @@ NcDirect_dealloc(NcDirectObject *self)
 }
 
 static PyObject *
+NcDirect_get_dim_x(NcDirectObject *self, PyObject *args)
+{
+    if (!PyArg_ParseTuple(args, ""))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse arguments");
+        return NULL;
+    }
+    return PyLong_FromLong(ncdirect_dim_x(self->ncdirect_ptr));
+}
+
+static PyObject *
+NcDirect_get_dim_y(NcDirectObject *self, PyObject *args)
+{
+    if (!PyArg_ParseTuple(args, ""))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse arguments");
+        return NULL;
+    }
+    return PyLong_FromLong(ncdirect_dim_y(self->ncdirect_ptr));
+}
+
+static PyObject *
 NcDirect_putstr(NcDirectObject *self, PyObject *args)
 {
     const char *string = NULL;
@@ -361,6 +383,8 @@ NcDirect_init(NcDirectObject *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyMethodDef NcDirect_methods[] = {
+    {"_get_dim_x", (PyCFunction)NcDirect_get_dim_x, METH_VARARGS, "Put string on the direct plane."},
+    {"_get_dim_y", (PyCFunction)NcDirect_get_dim_y, METH_VARARGS, "Put string on the direct plane."},
     {"putstr", (PyCFunction)NcDirect_putstr, METH_VARARGS, "Put string on the direct plane."},
     {"disable_cursor", (PyCFunction)NcDirect_disable_cursor, METH_VARARGS, "Disable cursor of the direct plane."},
     {"enable_cursor", (PyCFunction)NcDirect_enable_cursor, METH_VARARGS, "Enable cursor of the direct plane."},
@@ -373,7 +397,7 @@ static PyTypeObject NcDirectType = {
     .tp_doc = "Notcurses Direct",
     .tp_basicsize = sizeof(NcDirectObject),
     .tp_itemsize = 0,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
     .tp_new = PyType_GenericNew,
     .tp_init = (initproc)NcDirect_init,
     .tp_dealloc = (destructor)NcDirect_dealloc,

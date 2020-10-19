@@ -48,14 +48,24 @@ def get_notcurses_version() -> str:
 
 
 class _NcDirect:
-    def putstr(self, string: str,
-               channels: Optional[_NcChannels] = None) -> None:
+    def putstr(
+        self,
+        string: str,
+        channels: Optional[_NcChannels] = None,
+    ) -> None:
+
         ...
 
     def disable_cursor(self) -> None:
         ...
 
     def enable_cursor(self) -> None:
+        ...
+
+    def _get_dim_x(self) -> int:
+        ...
+
+    def _get_dim_y(self) -> int:
         ...
 
 
