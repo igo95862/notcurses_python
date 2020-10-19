@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Tuple
+from typing import Tuple, Optional
 
 from ._notcurses import _NcPlane, _NotcursesContext
 
@@ -41,6 +41,12 @@ class NcPlane:
         return self._nc_plane.get_dimensions()
 
 
+_default_context: Optional[_NotcursesContext] = None
+
+
 def get_std_plane() -> NcPlane:
-    nctx = _NotcursesContext()
-    return NcPlane(nctx.get_std_plane(), nctx)
+    global _default_context
+    if _default_context is None:
+        _default_context = _NotcursesContext()
+
+    return NcPlane(_default_context.get_std_plane(), _default_context)
