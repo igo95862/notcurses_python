@@ -13,7 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Tuple
+from __future__ import annotations
+from typing import Tuple, Optional
 
 
 class _NcPlane:
@@ -47,5 +48,14 @@ def get_notcurses_version() -> str:
 
 
 class _NcDirect:
-    def putstr(self, string: str) -> None:
+    def putstr(self, string: str,
+               channels: Optional[_NcChannels] = None) -> None:
+        ...
+
+
+class _NcChannels:
+    def set_background_color(self, red: int, green: int, blue: int) -> None:
+        ...
+
+    def set_foreground_color(self, red: int, green: int, blue: int) -> None:
         ...

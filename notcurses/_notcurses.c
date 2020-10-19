@@ -22,6 +22,60 @@ limitations under the License.
 typedef struct
 {
     PyObject_HEAD;
+    uint64_t nc_channels;
+} NcChannelsObject;
+
+static PyObject *
+NcChannels_set_background_rgb(NcChannelsObject *self, PyObject *args)
+{
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    if (!PyArg_ParseTuple(args, "iii", &red, &green, &blue))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse arguments");
+        return NULL;
+    }
+    channels_set_fg_rgb8_clipped(&(self->nc_channels), red, green, blue);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+NcChannels_set_foreground_rgb(NcChannelsObject *self, PyObject *args)
+{
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    if (!PyArg_ParseTuple(args, "iii", &red, &green, &blue))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse arguments");
+        return NULL;
+    }
+    channels_set_bg_rgb8_clipped(&(self->nc_channels), red, green, blue);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef NcChannels_methods[] = {
+    {"set_background_color", (PyCFunction)NcChannels_set_background_rgb, METH_VARARGS, "Set background color to RGB"},
+    {"set_foreground_color", (PyCFunction)NcChannels_set_foreground_rgb, METH_VARARGS, "Set foreground color to RGB"},
+    {NULL, NULL, 0, NULL},
+};
+
+static PyTypeObject NcChannelsType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+        .tp_name = "notcurses._notcurses._NcChannels",
+    .tp_doc = "Notcurses Channels",
+    .tp_basicsize = sizeof(NcChannelsObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PyType_GenericNew,
+    .tp_init = NULL,
+    .tp_methods = NcChannels_methods,
+};
+
+typedef struct
+{
+    PyObject_HEAD;
     struct ncplane *ncplane_ptr;
 } NcPlaneObject;
 
@@ -222,12 +276,18 @@ static PyObject *
 NcDirect_putstr(NcDirecttObject *self, PyObject *args)
 {
     const char *string = NULL;
-    if (!PyArg_ParseTuple(args, "s", &string))
+    const NcChannelsObject *channels_object = NULL;
+    if (!PyArg_ParseTuple(args, "s|O!", &string, &NcChannelsType, &channels_object))
     {
         PyErr_SetString(PyExc_RuntimeError, "Failed to parse NcDirect_putstr arguments");
         return NULL;
     }
-    int return_code = ncdirect_putstr(self->ncdirect_ptr, 0, string);
+    uint64_t channels = 0;
+    if (channels_object != NULL)
+    {
+        channels = channels_object->nc_channels;
+    }
+    int return_code = ncdirect_putstr(self->ncdirect_ptr, channels, string);
     if (return_code >= 0)
     {
         return PyLong_FromLong(return_code);
@@ -312,6 +372,9 @@ PyInit__notcurses(void)
     if (PyType_Ready(&NcDirectType) < 0)
         return NULL;
 
+    if (PyType_Ready(&NcChannelsType) < 0)
+        return NULL;
+
     py_module = PyModule_Create(&NotcursesModule);
     if (py_module == NULL)
         return NULL;
@@ -336,6 +399,14 @@ PyInit__notcurses(void)
     if (PyModule_AddObject(py_module, "_NcDirect", (PyObject *)&NcDirectType) < 0)
     {
         Py_DECREF(&NcDirectType);
+        Py_DECREF(py_module);
+        return NULL;
+    }
+
+    Py_INCREF(&NcChannelsType);
+    if (PyModule_AddObject(py_module, "_NcChannels", (PyObject *)&NcChannelsType) < 0)
+    {
+        Py_DECREF(&NcChannelsType);
         Py_DECREF(py_module);
         return NULL;
     }
