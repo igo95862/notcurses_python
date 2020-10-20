@@ -58,5 +58,5 @@ class NcChannels(_NcChannels):
 
 class NcDirect(_NcDirect):
     @property
-    def dimensions(self) -> Tuple[int, int]:
+    def dimensions_yx(self) -> Tuple[int, int]:
         return self._get_dim_y(), self._get_dim_x()
