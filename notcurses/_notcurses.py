@@ -14,64 +14,63 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Tuple, Optional
+from typing import Optional
+
+
+class _NcChannels:
+    ...
 
 
 class _NcPlane:
-    def get_dimensions(self) -> Tuple[int, int]:
-        ...
-
-    def putstr(self, string: str, y_pos: int = -1, x_pos: int = -1) -> int:
-        ...
-
-    def set_background_color(self, red: int, green: int, blue: int) -> None:
-        ...
-
-    def set_foreground_color(self, red: int, green: int, blue: int) -> None:
-        ...
+    ...
 
 
 class _NotcursesContext:
-    def __init__(self, fileno: int = -1):
-        ...
+    ...
 
-    def get_std_plane(self) -> _NcPlane:
-        ...
 
-    def render(self) -> None:
-        ...
+class _NcDirect:
+    ...
+
+
+def _nc_direct_init(ncdirect: _NcDirect, /) -> None:
+    ...
+
+
+def _nc_direct_putstr(nc_direct: _NcDirect,
+                      string: str,
+                      nc_channels: Optional[_NcChannels], /) -> int:
+    ...
+
+
+def _nc_direct_get_dim_x(nc_direct: _NcDirect, /) -> int:
+    ...
+
+
+def _nc_direct_get_dim_y(nc_direct: _NcDirect, /) -> int:
+    ...
+
+
+def _nc_direct_disable_cursor(nc_direct: _NcDirect, /) -> None:
+    ...
+
+
+def _nc_direct_enable_cursor(nc_direct: _NcDirect, /) -> None:
+    ...
+
+
+def _nc_channels_set_background_rgb(
+        nc_channels: _NcChannels,
+        red: int, green: int, blue: int, /) -> None:
+    ...
+
+
+def _nc_channels_set_foreground_rgb(
+        nc_channels: _NcChannels,
+        red: int, green: int, blue: int, /) -> None:
+    ...
 
 
 def get_notcurses_version() -> str:
     """Returns notcurses version from library"""
     ...
-
-
-class _NcDirect:
-    def putstr(
-        self,
-        string: str,
-        channels: Optional[_NcChannels] = None,
-    ) -> None:
-
-        ...
-
-    def disable_cursor(self) -> None:
-        ...
-
-    def enable_cursor(self) -> None:
-        ...
-
-    def _get_dim_x(self) -> int:
-        ...
-
-    def _get_dim_y(self) -> int:
-        ...
-
-
-class _NcChannels:
-    def set_background_color(self, red: int, green: int, blue: int) -> None:
-        ...
-
-    def set_foreground_color(self, red: int, green: int, blue: int) -> None:
-        ...

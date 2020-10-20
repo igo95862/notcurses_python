@@ -19,10 +19,10 @@ from notcurses import NcChannels, NcDirect
 
 # Acquire the NcDirect plane
 nc_direct = NcDirect()
-nc_direct.disable_cursor()
+nc_direct.cursor_enabled = False
 channels = NcChannels()
-channels.set_background_color(255, 0, 0)
-channels.set_foreground_color(0, 0, 0)
+channels.set_background_rgb(255, 0, 0)
+channels.set_foreground_rgb(0, 0, 0)
 
 # Get x dimensions, ignore y
 _, x_dimension = nc_direct.dimensions_yx
@@ -62,8 +62,8 @@ nc_direct.putstr(mem_sting)  # Put the used memory
 for red_shift in red_line_gen(len(mem_sting), mem_percent_used):
     # Get the red shift from the function and use it in red channel
     # and subtract it from green
-    channels.set_background_color(red_shift, 255-red_shift, 0)
-    channels.set_foreground_color(red_shift, 255-red_shift, 0)
+    channels.set_background_rgb(red_shift, 255-red_shift, 0)
+    channels.set_foreground_rgb(red_shift, 255-red_shift, 0)
     nc_direct.putstr('X', channels)
 
 nc_direct.putstr('\n')  # Finish line
@@ -75,11 +75,15 @@ swap_percent_used = 1.0 - swap_avalible / swap_total
 
 swap_string = f"Swap used:   {round(100.0 * swap_percent_used)}% "
 
+# Add space in case swap is a single digit
+if len(swap_string) < len(mem_sting):
+    swap_string += ' '
+
 nc_direct.putstr(swap_string)
 
 for red_shift in red_line_gen(len(swap_string), swap_percent_used):
-    channels.set_background_color(red_shift, 255-red_shift, 0)
-    channels.set_foreground_color(red_shift, 255-red_shift, 0)
+    channels.set_background_rgb(red_shift, 255-red_shift, 0)
+    channels.set_foreground_rgb(red_shift, 255-red_shift, 0)
     nc_direct.putstr('X', channels)
 
 nc_direct.putstr('\n')
