@@ -37,6 +37,10 @@ def _nc_direct_init(ncdirect: _NcDirect, /) -> None:
     ...
 
 
+def _nc_direct_stop(ncdirect: _NcDirect, /) -> None:
+    ...
+
+
 def _nc_direct_putstr(nc_direct: _NcDirect,
                       string: str,
                       nc_channels: Optional[_NcChannels], /) -> int:

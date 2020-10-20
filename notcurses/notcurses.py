@@ -21,7 +21,7 @@ from ._notcurses import (_NcChannels, _nc_channels_set_background_rgb,
                          _nc_direct_get_dim_x, _nc_direct_get_dim_y,
                          _nc_direct_init, _NcPlane, _NotcursesContext,
                          _nc_direct_putstr, _nc_direct_enable_cursor,
-                         _nc_direct_disable_cursor)
+                         _nc_direct_disable_cursor, _nc_direct_stop)
 
 
 class NcPlane:
@@ -58,11 +58,20 @@ class NcDirect:
                  start_immideatly: bool = True):
         self._nc_direct = _NcDirect()
         self._is_cursor_enabled: Optional[bool] = None
+        self._has_started = False
         if start_immideatly:
             self.start()
 
+    def __del__(self) -> None:
+        if self._has_started:
+            self.stop()
+
     def start(self) -> None:
         _nc_direct_init(self._nc_direct)
+        self._has_started = True
+
+    def stop(self) -> None:
+        _nc_direct_stop(self._nc_direct)
 
     def putstr(
             self, string: str,

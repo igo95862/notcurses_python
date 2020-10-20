@@ -89,17 +89,7 @@ typedef struct
 {
     PyObject_HEAD;
     struct ncdirect *ncdirect_ptr;
-    bool has_been_enabled;
 } NcDirectObject;
-
-static void
-NcDirect_dealloc(NcDirectObject *self)
-{
-    if (self->has_been_enabled)
-    {
-        ncdirect_stop(self->ncdirect_ptr);
-    }
-}
 
 static PyMethodDef NcDirect_methods[] = {
     {NULL, NULL, 0, NULL},
@@ -113,7 +103,6 @@ static PyTypeObject NcDirectType = {
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_new = PyType_GenericNew,
-    .tp_dealloc = (destructor) NcDirect_dealloc,
     .tp_methods = NcDirect_methods,
 };
 
@@ -158,12 +147,32 @@ _nc_direct_init(PyObject *self, PyObject *args)
     if (ncdirect_ptr != NULL)
     {
         ncdirect_ref->ncdirect_ptr = ncdirect_ptr;
-        ncdirect_ref->has_been_enabled = true;
         Py_RETURN_NONE;
     }
     else
     {
         PyErr_SetString(PyExc_RuntimeError, "Failed to acquire NcDirectObject");
+        return NULL;
+    }
+}
+
+static PyObject *
+_nc_direct_stop(PyObject *self, PyObject *args)
+{
+    NcDirectObject *ncdirect_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NcDirectType, &ncdirect_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _ncdirect_init arguments");
+        return NULL;
+    }
+    int return_code = ncdirect_stop(ncdirect_ref->ncdirect_ptr);
+    if (return_code == 0)
+    {
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to stop NcDirectObject");
         return NULL;
     }
 }
@@ -360,9 +369,10 @@ get_notcurses_version_str(PyObject *self, PyObject *args)
 }
 
 // Copy pasta
-// {"_ncdirect_init", (PyCFunction)_ncdirect_init, METH_VARARGS, NULL},
+// {"_nc_direct_init", (PyCFunction)_ncdirect_init, METH_VARARGS, NULL},
 static PyMethodDef NotcursesMethods[] = {
     {"_nc_direct_init", (PyCFunction)_nc_direct_init, METH_VARARGS, NULL},
+    {"_nc_direct_stop", (PyCFunction)_nc_direct_stop, METH_VARARGS, NULL},
     {"_nc_direct_putstr", (PyCFunction)_nc_direct_putstr, METH_VARARGS, NULL},
     {"_nc_direct_get_dim_x", (PyCFunction)_nc_direct_get_dim_x, METH_VARARGS, NULL},
     {"_nc_direct_get_dim_y", (PyCFunction)_nc_direct_get_dim_y, METH_VARARGS, NULL},
