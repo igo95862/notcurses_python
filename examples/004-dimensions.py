@@ -23,12 +23,12 @@ red = 0x80
 green = 0x80
 blue = 0x80
 
-y_dimension, x_dimension = std_plane.dimensions
+y_dimension, x_dimension = std_plane.dimensions_yx
 
 for y in range(y_dimension):
     for x in range(x_dimension):
-        std_plane.set_foreground_color(red, green, blue)
-        std_plane.set_background_color(blue, red, green)
+        std_plane.set_foreground_rgb(red, green, blue)
+        std_plane.set_background_rgb(blue, red, green)
         std_plane.putstr('X', y_pos=y, x_pos=x)
         blue += 2
         if blue == 256:

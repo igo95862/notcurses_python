@@ -14,7 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
-from typing import Optional
+
+from typing import Optional, Tuple
 
 
 class _NcChannels:
@@ -72,6 +73,64 @@ def _nc_channels_set_background_rgb(
 def _nc_channels_set_foreground_rgb(
         nc_channels: _NcChannels,
         red: int, green: int, blue: int, /) -> None:
+    ...
+
+
+def _notcurses_context_init(nc_context: _NotcursesContext, /) -> None:
+    ...
+
+
+def _notcurses_context_stop(nc_context: _NotcursesContext, /) -> None:
+    ...
+
+
+def _notcurses_context_render(nc_context: _NotcursesContext, /) -> None:
+    ...
+
+
+def _notcurses_context_mouse_disable(nc_context: _NotcursesContext, /) -> None:
+    ...
+
+
+def _notcurses_context_mouse_enable(nc_context: _NotcursesContext, /) -> None:
+    ...
+
+
+def _notcurses_context_cursor_disable(
+        nc_context: _NotcursesContext, /) -> None:
+    ...
+
+
+def _notcurses_context_cursor_enable(
+        nc_context: _NotcursesContext,
+        y_pos: int, x_pos: int, /) -> None:
+    ...
+
+
+def _notcurses_context_get_std_plane(
+        nc_context: _NotcursesContext, /) -> _NcPlane:
+    ...
+
+
+def _nc_plane_set_background_rgb(
+        nc_plane: _NcPlane,
+        red: int, green: int, blue: int, /) -> None:
+    ...
+
+
+def _nc_plane_set_foreground_rgb(
+        nc_plane: _NcPlane,
+        red: int, green: int, blue: int, /) -> None:
+    ...
+
+
+def _nc_plane_putstr(
+        nc_plane: _NcPlane, string: str,
+        y_pos: int, x_pos: int) -> None:
+    ...
+
+
+def _nc_plane_dimensions_yx(nc_plane: _NcPlane) -> Tuple[int, int]:
     ...
 
 

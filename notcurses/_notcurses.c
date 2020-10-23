@@ -361,6 +361,300 @@ _nc_channels_set_foreground_rgb(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+// NotcursesContext
+
+static PyObject *
+_notcurses_context_init(PyObject *self, PyObject *args)
+{
+    NotcursesContextObject *notcurses_context_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NotcursesContextType, &notcurses_context_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_init arguments");
+        return NULL;
+    }
+    struct notcurses *notcurses_context_ptr = notcurses_init(NULL, NULL);
+    if (notcurses_context_ptr != NULL)
+    {
+        notcurses_context_ref->notcurses_context_ptr = notcurses_context_ptr;
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed initialize Notcurses");
+        return NULL;
+    }
+}
+
+static PyObject *
+_notcurses_context_stop(PyObject *self, PyObject *args)
+{
+    NotcursesContextObject *notcurses_context_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NotcursesContextType, &notcurses_context_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_stop arguments");
+        return NULL;
+    }
+    int return_code = notcurses_stop(notcurses_context_ref->notcurses_context_ptr);
+    if (return_code == 0)
+    {
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to stop notcurses context");
+        return NULL;
+    }
+}
+
+static PyObject *
+_notcurses_context_render(PyObject *self, PyObject *args)
+{
+    NotcursesContextObject *notcurses_context_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NotcursesContextType, &notcurses_context_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_render arguments");
+        return NULL;
+    }
+    int return_code = notcurses_render(notcurses_context_ref->notcurses_context_ptr);
+    if (return_code == 0)
+    {
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to render");
+        return NULL;
+    }
+}
+
+static PyObject *
+_notcurses_context_mouse_disable(PyObject *self, PyObject *args)
+{
+    NotcursesContextObject *notcurses_context_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NotcursesContextType, &notcurses_context_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_mouse_disable arguments");
+        return NULL;
+    }
+    int return_code = notcurses_mouse_disable(notcurses_context_ref->notcurses_context_ptr);
+    if (return_code == 0)
+    {
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to disable mouse");
+        return NULL;
+    }
+}
+
+static PyObject *
+_notcurses_context_mouse_enable(PyObject *self, PyObject *args)
+{
+    NotcursesContextObject *notcurses_context_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NotcursesContextType, &notcurses_context_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_mouse_enable arguments");
+        return NULL;
+    }
+    int return_code = notcurses_mouse_enable(notcurses_context_ref->notcurses_context_ptr);
+    if (return_code == 0)
+    {
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to enable mouse");
+        return NULL;
+    }
+}
+
+static PyObject *
+_notcurses_context_cursor_disable(PyObject *self, PyObject *args)
+{
+    NotcursesContextObject *notcurses_context_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NotcursesContextType, &notcurses_context_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_cursor_disable arguments");
+        return NULL;
+    }
+    int return_code = notcurses_cursor_disable(notcurses_context_ref->notcurses_context_ptr);
+    if (return_code == 0)
+    {
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to disable cursor");
+        return NULL;
+    }
+}
+
+static PyObject *
+_notcurses_context_cursor_enable(PyObject *self, PyObject *args)
+{
+    NotcursesContextObject *notcurses_context_ref = NULL;
+    int y = 0;
+    int x = 0;
+    if (!PyArg_ParseTuple(args, "O!|ii", &NotcursesContextType, &notcurses_context_ref,
+                          &y, &x))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_cursor_enable arguments");
+        return NULL;
+    }
+    int return_code = notcurses_cursor_enable(notcurses_context_ref->notcurses_context_ptr, y, x);
+    if (return_code == 0)
+    {
+        Py_RETURN_NONE;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to enable cursor");
+        return NULL;
+    }
+}
+
+static NcPlaneObject *
+_notcurses_context_get_std_plane(PyObject *self, PyObject *args)
+{
+    NotcursesContextObject *notcurses_context_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NotcursesContextType, &notcurses_context_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_cursor_enable arguments");
+        return NULL;
+    }
+    struct ncplane *std_plane = notcurses_stdplane(notcurses_context_ref->notcurses_context_ptr);
+    NcPlaneObject *ncplane_ref = PyObject_NEW(NcPlaneObject, &NcPlaneType);
+    //PyObject_INIT(&ncplane_ref, &NcPlaneType);
+
+    if (ncplane_ref != NULL && std_plane != NULL)
+    {
+        ncplane_ref->ncplane_ptr = std_plane;
+        return ncplane_ref;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to get std plane");
+        return NULL;
+    }
+}
+
+// NcPlane
+
+static PyObject *
+_nc_plane_set_background_rgb(PyObject *self, PyObject *args)
+{
+    NcPlaneObject *nc_plane_ref = NULL;
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    if (!PyArg_ParseTuple(args, "O!iii",
+                          &NcPlaneType, &nc_plane_ref,
+                          &red, &green, &blue))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_set_background_rgb arguments");
+        return NULL;
+    }
+
+    if (nc_plane_ref == NULL)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to acquire NcPlaneObject");
+        return NULL;
+    }
+
+    int return_code = ncplane_set_bg_rgb8(nc_plane_ref->ncplane_ptr, red, green, blue);
+    if (return_code != 0)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to set plane background colors");
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+_nc_plane_set_foreground_rgb(PyObject *self, PyObject *args)
+{
+    NcPlaneObject *nc_plane_ref = NULL;
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    if (!PyArg_ParseTuple(args, "O!iii",
+                          &NcPlaneType, &nc_plane_ref,
+                          &red, &green, &blue))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_set_foreground_rgb arguments");
+        return NULL;
+    }
+
+    if (nc_plane_ref == NULL)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to acquire NcPlaneObject");
+        return NULL;
+    }
+
+    int return_code = ncplane_set_fg_rgb8(nc_plane_ref->ncplane_ptr, red, green, blue);
+    if (return_code != 0)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to set plane foreground colors");
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+_nc_plane_putstr(PyObject *self, PyObject *args)
+{
+    NcPlaneObject *nc_plane_ref = NULL;
+    int y_pos = -1;
+    int x_pos = -1;
+    const char *string = NULL;
+    if (!PyArg_ParseTuple(args, "O!sii",
+                          &NcPlaneType, &nc_plane_ref,
+                          &string,
+                          &y_pos, &x_pos))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_putstr arguments");
+        return NULL;
+    }
+
+    if (nc_plane_ref == NULL)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to acquire NcPlaneObject");
+        return NULL;
+    }
+
+    int return_code = ncplane_putstr_yx(nc_plane_ref->ncplane_ptr, y_pos, x_pos, string);
+    if (return_code < 0)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to put string");
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+_nc_plane_dimensions_yx(PyObject *self, PyObject *args)
+{
+    NcPlaneObject *nc_plane_ref = NULL;
+    int y_dim = 0;
+    int x_dim = 0;
+    if (!PyArg_ParseTuple(args, "O!",
+                          &NcPlaneType, &nc_plane_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_set_foreground_rgb arguments");
+        return NULL;
+    }
+
+    if (nc_plane_ref == NULL)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to acquire NcPlaneObject");
+        return NULL;
+    }
+
+    ncplane_dim_yx(nc_plane_ref->ncplane_ptr, &y_dim, &x_dim);
+    return PyTuple_Pack(2, PyLong_FromLong(y_dim), PyLong_FromLong(x_dim));
+}
+
 static PyObject *
 get_notcurses_version_str(PyObject *self, PyObject *args)
 {
@@ -380,6 +674,18 @@ static PyMethodDef NotcursesMethods[] = {
     {"_nc_direct_enable_cursor", (PyCFunction)_nc_direct_enable_cursor, METH_VARARGS, NULL},
     {"_nc_channels_set_background_rgb", (PyCFunction)_nc_channels_set_background_rgb, METH_VARARGS, NULL},
     {"_nc_channels_set_foreground_rgb", (PyCFunction)_nc_channels_set_foreground_rgb, METH_VARARGS, NULL},
+    {"_notcurses_context_init", (PyCFunction)_notcurses_context_init, METH_VARARGS, NULL},
+    {"_notcurses_context_stop", (PyCFunction)_notcurses_context_stop, METH_VARARGS, NULL},
+    {"_notcurses_context_render", (PyCFunction)_notcurses_context_render, METH_VARARGS, NULL},
+    {"_notcurses_context_mouse_disable", (PyCFunction)_notcurses_context_mouse_disable, METH_VARARGS, NULL},
+    {"_notcurses_context_mouse_enable", (PyCFunction)_notcurses_context_mouse_enable, METH_VARARGS, NULL},
+    {"_notcurses_context_cursor_disable", (PyCFunction)_notcurses_context_cursor_disable, METH_VARARGS, NULL},
+    {"_notcurses_context_cursor_enable", (PyCFunction)_notcurses_context_cursor_enable, METH_VARARGS, NULL},
+    {"_notcurses_context_get_std_plane", (PyCFunction)_notcurses_context_get_std_plane, METH_VARARGS, NULL},
+    {"_nc_plane_set_background_rgb", (PyCFunction)_nc_plane_set_background_rgb, METH_VARARGS, NULL},
+    {"_nc_plane_set_foreground_rgb", (PyCFunction)_nc_plane_set_foreground_rgb, METH_VARARGS, NULL},
+    {"_nc_plane_putstr", (PyCFunction)_nc_plane_putstr, METH_VARARGS, NULL},
+    {"_nc_plane_dimensions_yx", (PyCFunction)_nc_plane_dimensions_yx, METH_VARARGS, NULL},
     {"get_notcurses_version", (PyCFunction)get_notcurses_version_str, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL},
 };

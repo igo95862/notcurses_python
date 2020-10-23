@@ -14,26 +14,89 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import annotations
+
 from typing import Optional, Tuple
 
-from ._notcurses import (_NcChannels, _nc_channels_set_background_rgb,
-                         _nc_channels_set_foreground_rgb, _NcDirect,
+from ._notcurses import (_nc_channels_set_background_rgb,
+                         _nc_channels_set_foreground_rgb,
+                         _nc_direct_disable_cursor, _nc_direct_enable_cursor,
                          _nc_direct_get_dim_x, _nc_direct_get_dim_y,
-                         _nc_direct_init, _NcPlane, _NotcursesContext,
-                         _nc_direct_putstr, _nc_direct_enable_cursor,
-                         _nc_direct_disable_cursor, _nc_direct_stop)
+                         _nc_direct_init, _nc_direct_putstr, _nc_direct_stop,
+                         _nc_plane_dimensions_yx, _nc_plane_putstr,
+                         _nc_plane_set_background_rgb,
+                         _nc_plane_set_foreground_rgb, _NcChannels, _NcDirect,
+                         _NcPlane, _notcurses_context_get_std_plane,
+                         _notcurses_context_init, _notcurses_context_stop,
+                         _NotcursesContext, _notcurses_context_render)
+
+
+class NotcursesContext:
+    def __init__(self,
+                 start_immideatly: bool = True):
+        self._nc_context = _NotcursesContext()
+        self._has_started = False
+        if start_immideatly:
+            self.start()
+
+    def render(self) -> None:
+        _notcurses_context_render(self._nc_context)
+
+    def start(self) -> None:
+        _notcurses_context_init(self._nc_context)
+        self._has_started = True
+
+    def stop(self) -> None:
+        _notcurses_context_stop(self._nc_context)
+        self._has_started = False
+
+    def __del__(self) -> None:
+        if self._has_started:
+            self.stop()
 
 
 class NcPlane:
-    def __init__(self) -> None:
-        self._nc_plane = _NcPlane()
+    def __init__(self, plane: _NcPlane, parent: NotcursesContext) -> None:
+        self._nc_plane = plane
+        self.parent = parent
+
+    @property
+    def dimensions_yx(self) -> Tuple[int, int]:
+        return _nc_plane_dimensions_yx(self._nc_plane)
+
+    def putstr(
+            self,
+            string: str,
+            y_pos: int = -1, x_pos: int = -1) -> None:
+        _nc_plane_putstr(
+            self._nc_plane,
+            string,
+            y_pos,
+            x_pos,
+        )
+
+    def set_background_rgb(
+            self, red: int, green: int, blue: int) -> None:
+        _nc_plane_set_background_rgb(self._nc_plane, red, green, blue)
+
+    def set_foreground_rgb(
+            self, red: int, green: int, blue: int) -> None:
+        _nc_plane_set_foreground_rgb(self._nc_plane, red, green, blue)
+
+    def render(self) -> None:
+        self.parent.render()
 
 
-_default_context: Optional[_NotcursesContext] = None
+_default_context: Optional[NotcursesContext] = None
 
 
 def get_std_plane() -> NcPlane:
-    ...
+    global _default_context
+    if _default_context is None:
+        _default_context = NotcursesContext()
+
+    std_plane_ref = _notcurses_context_get_std_plane(
+        _default_context._nc_context)
+    return NcPlane(std_plane_ref, _default_context)
 
 
 class NcChannels:
