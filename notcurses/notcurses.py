@@ -25,9 +25,15 @@ from ._notcurses import (_nc_channels_set_background_rgb,
                          _nc_plane_dimensions_yx, _nc_plane_putstr,
                          _nc_plane_set_background_rgb,
                          _nc_plane_set_foreground_rgb, _NcChannels, _NcDirect,
-                         _NcPlane, _notcurses_context_get_std_plane,
-                         _notcurses_context_init, _notcurses_context_stop,
-                         _NotcursesContext, _notcurses_context_render)
+                         _NcInput, _NcPlane, _notcurses_context_cursor_disable,
+                         _notcurses_context_cursor_enable,
+                         _notcurses_context_get_input_blocking,
+                         _notcurses_context_get_std_plane,
+                         _notcurses_context_init,
+                         _notcurses_context_mouse_disable,
+                         _notcurses_context_mouse_enable,
+                         _notcurses_context_render, _notcurses_context_stop,
+                         _NotcursesContext)
 
 
 class NotcursesContext:
@@ -49,9 +55,59 @@ class NotcursesContext:
         _notcurses_context_stop(self._nc_context)
         self._has_started = False
 
+    def get_input_blocking(self) -> NcInput:
+        return NcInput(
+            _notcurses_context_get_input_blocking(self._nc_context)
+        )
+
+    def enable_mouse(self) -> None:
+        _notcurses_context_mouse_enable(self._nc_context)
+
+    def disable_mouse(self) -> None:
+        _notcurses_context_mouse_disable(self._nc_context)
+
+    def enable_cursor(self) -> None:
+        _notcurses_context_cursor_enable(self._nc_context, 0, 0)
+
+    def disable_cursor(self) -> None:
+        _notcurses_context_cursor_disable(self._nc_context)
+
     def __del__(self) -> None:
         if self._has_started:
             self.stop()
+
+
+class NcInput:
+    def __init__(self, nc_input: _NcInput):
+        self._nc_input = nc_input
+
+    @property
+    def code(self) -> str:
+        return chr(self._nc_input.codepoint)
+
+    @property
+    def y_pos(self) -> int:
+        return self._nc_input.y_pos
+
+    @property
+    def x_pos(self) -> int:
+        return self._nc_input.x_pos
+
+    @property
+    def is_alt(self) -> bool:
+        return self._nc_input.is_alt
+
+    @property
+    def is_shift(self) -> bool:
+        return self._nc_input.is_shift
+
+    @property
+    def is_ctrl(self) -> bool:
+        return self._nc_input.is_ctrl
+
+    @property
+    def seqnum(self) -> int:
+        return self._nc_input.seqnum
 
 
 class NcPlane:

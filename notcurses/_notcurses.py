@@ -34,6 +34,36 @@ class _NcDirect:
     ...
 
 
+class _NcInput:
+    @property
+    def codepoint(self) -> int:
+        ...
+
+    @property
+    def y_pos(self) -> int:
+        ...
+
+    @property
+    def x_pos(self) -> int:
+        ...
+
+    @property
+    def is_alt(self) -> bool:
+        ...
+
+    @property
+    def is_shift(self) -> bool:
+        ...
+
+    @property
+    def is_ctrl(self) -> bool:
+        ...
+
+    @property
+    def seqnum(self) -> int:
+        ...
+
+
 def _nc_direct_init(ncdirect: _NcDirect, /) -> None:
     ...
 
@@ -109,6 +139,11 @@ def _notcurses_context_cursor_enable(
 
 def _notcurses_context_get_std_plane(
         nc_context: _NotcursesContext, /) -> _NcPlane:
+    ...
+
+
+def _notcurses_context_get_input_blocking(
+        nc_context: _NotcursesContext, /) -> _NcInput:
     ...
 
 

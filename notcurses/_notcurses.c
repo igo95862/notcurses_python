@@ -18,6 +18,7 @@ limitations under the License.
 #include <Python.h>
 #include <notcurses/notcurses.h>
 #include <notcurses/direct.h>
+#include "structmember.h"
 
 typedef struct
 {
@@ -104,6 +105,45 @@ static PyTypeObject NcDirectType = {
     .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_new = PyType_GenericNew,
     .tp_methods = NcDirect_methods,
+};
+
+typedef struct
+{
+    PyObject_HEAD;
+    long codepoint;
+    int y_pos;
+    int x_pos;
+    bool is_alt;
+    bool is_shift;
+    bool is_ctrl;
+    uint64_t seqnum;
+} NcInputObject;
+
+static PyMemberDef NcInput_members[] = {
+    {"codepoint", T_LONG, offsetof(NcInputObject, codepoint), READONLY, "Codepoint"},
+    {"y_pos", T_INT, offsetof(NcInputObject, y_pos), READONLY, "Y axis positions"},
+    {"x_pos", T_INT, offsetof(NcInputObject, x_pos), READONLY, "X axis positions"},
+    {"is_alt", T_BOOL, offsetof(NcInputObject, is_alt), READONLY, "Is alt pressed"},
+    {"is_shift", T_BOOL, offsetof(NcInputObject, is_shift), READONLY, "Is shift pressed"},
+    {"is_ctrl", T_BOOL, offsetof(NcInputObject, is_ctrl), READONLY, "Is ctrl pressed"},
+    {"seqnum", T_ULONGLONG, offsetof(NcInputObject, seqnum), READONLY, "Sequence number"},
+    {NULL}};
+
+static PyMethodDef NcInput_methods[] = {
+    {NULL, NULL, 0, NULL},
+};
+
+static PyTypeObject NcInputType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+        .tp_name = "notcurses._notcurses._NcInput",
+    .tp_doc = "Notcurses Input",
+    .tp_basicsize = sizeof(NcInputObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PyType_GenericNew,
+    .tp_members = NcInput_members,
+    .tp_methods = NcInput_methods,
+    //.tp_alloc = PyType_GenericAlloc,
 };
 
 // Functions
@@ -539,6 +579,39 @@ _notcurses_context_get_std_plane(PyObject *self, PyObject *args)
     }
 }
 
+static NcInputObject *
+_notcurses_context_get_input_blocking(PyObject *self, PyObject *args)
+{
+    NotcursesContextObject *notcurses_context_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NotcursesContextType, &notcurses_context_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_get_input_blocking arguments");
+        return NULL;
+    }
+    struct ncinput nc_input_ptr = {};
+    char32_t code_point = notcurses_getc_blocking(notcurses_context_ref->notcurses_context_ptr, &nc_input_ptr);
+    NcInputObject *nc_input_ref = PyObject_NEW(NcInputObject, &NcInputType);
+    PyObject_INIT(nc_input_ref, &NcInputType);
+    if (code_point != -1)
+    {
+
+        nc_input_ref->codepoint = (long)nc_input_ptr.id;
+        nc_input_ref->y_pos = nc_input_ptr.y;
+        nc_input_ref->x_pos = nc_input_ptr.x;
+        nc_input_ref->is_alt = nc_input_ptr.alt;
+        nc_input_ref->is_shift = nc_input_ptr.shift;
+        nc_input_ref->is_ctrl = nc_input_ptr.ctrl;
+        nc_input_ref->seqnum = nc_input_ptr.seqnum;
+
+        return nc_input_ref;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to get input");
+        return NULL;
+    }
+}
+
 // NcPlane
 
 static PyObject *
@@ -686,6 +759,7 @@ static PyMethodDef NotcursesMethods[] = {
     {"_nc_plane_set_foreground_rgb", (PyCFunction)_nc_plane_set_foreground_rgb, METH_VARARGS, NULL},
     {"_nc_plane_putstr", (PyCFunction)_nc_plane_putstr, METH_VARARGS, NULL},
     {"_nc_plane_dimensions_yx", (PyCFunction)_nc_plane_dimensions_yx, METH_VARARGS, NULL},
+    {"_notcurses_context_get_input_blocking", (PyCFunction)_notcurses_context_get_input_blocking, METH_VARARGS, NULL},
     {"get_notcurses_version", (PyCFunction)get_notcurses_version_str, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL},
 };
@@ -713,6 +787,9 @@ PyInit__notcurses(void)
         return NULL;
 
     if (PyType_Ready(&NcChannelsType) < 0)
+        return NULL;
+
+    if (PyType_Ready(&NcInputType) < 0)
         return NULL;
 
     py_module = PyModule_Create(&NotcursesModule);
@@ -747,6 +824,14 @@ PyInit__notcurses(void)
     if (PyModule_AddObject(py_module, "_NcChannels", (PyObject *)&NcChannelsType) < 0)
     {
         Py_DECREF(&NcChannelsType);
+        Py_DECREF(py_module);
+        return NULL;
+    }
+
+    Py_INCREF(&NcInputType);
+    if (PyModule_AddObject(py_module, "_NcInput", (PyObject *)&NcInputType) < 0)
+    {
+        Py_DECREF(&NcInputType);
         Py_DECREF(py_module);
         return NULL;
     }
