@@ -762,7 +762,7 @@ _nc_plane_erase(PyObject *self, PyObject *args)
     NcPlaneObject *nc_plane_ref = NULL;
     if (!PyArg_ParseTuple(args, "O!", &NcPlaneType, &nc_plane_ref))
     {
-        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_get_input_blocking arguments");
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_erase arguments");
         return NULL;
     }
     ncplane_erase(nc_plane_ref->ncplane_ptr);
