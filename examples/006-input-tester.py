@@ -29,6 +29,7 @@ std_plane.parent.enable_mouse()
 while True:
     # Get an input event and print its properties
     p = std_plane.parent.get_input_blocking()
+    std_plane.erase()
     std_plane.putstr(f"Code point: {p.code}",
                      y_pos=0, x_pos=0)
     std_plane.putstr(f"Y pos: {p.y_pos}", y_pos=1, x_pos=0)

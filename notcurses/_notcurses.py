@@ -161,11 +161,21 @@ def _nc_plane_set_foreground_rgb(
 
 def _nc_plane_putstr(
         nc_plane: _NcPlane, string: str,
-        y_pos: int, x_pos: int) -> None:
+        y_pos: int, x_pos: int, /) -> None:
     ...
 
 
-def _nc_plane_dimensions_yx(nc_plane: _NcPlane) -> Tuple[int, int]:
+def _nc_plane_dimensions_yx(nc_plane: _NcPlane, /) -> Tuple[int, int]:
+    ...
+
+
+def _nc_plane_polyfill_yx(
+        nc_plane: _NcPlane,
+        y_pos: int, x_pos: int, cell_str: str, /) -> int:
+    ...
+
+
+def _nc_plane_erase(nc_plane: _NcPlane, /) -> None:
     ...
 
 

@@ -22,8 +22,8 @@ from ._notcurses import (_nc_channels_set_background_rgb,
                          _nc_direct_disable_cursor, _nc_direct_enable_cursor,
                          _nc_direct_get_dim_x, _nc_direct_get_dim_y,
                          _nc_direct_init, _nc_direct_putstr, _nc_direct_stop,
-                         _nc_plane_dimensions_yx, _nc_plane_putstr,
-                         _nc_plane_set_background_rgb,
+                         _nc_plane_dimensions_yx, _nc_plane_erase,
+                         _nc_plane_putstr, _nc_plane_set_background_rgb,
                          _nc_plane_set_foreground_rgb, _NcChannels, _NcDirect,
                          _NcInput, _NcPlane, _notcurses_context_cursor_disable,
                          _notcurses_context_cursor_enable,
@@ -129,6 +129,9 @@ class NcPlane:
             y_pos,
             x_pos,
         )
+
+    def erase(self) -> None:
+        return _nc_plane_erase(self._nc_plane)
 
     def set_background_rgb(
             self, red: int, green: int, blue: int) -> None:

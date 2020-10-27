@@ -729,6 +729,47 @@ _nc_plane_dimensions_yx(PyObject *self, PyObject *args)
 }
 
 static PyObject *
+_nc_plane_polyfill_yx(PyObject *self, PyObject *args)
+{
+    NcPlaneObject *nc_plane_ref = NULL;
+    int y_dim = -1;
+    int x_dim = -1;
+    const char *cell_str = NULL;
+    if (!PyArg_ParseTuple(args, "O!iis",
+                          &NcPlaneType, &nc_plane_ref,
+                          &y_dim, &x_dim,
+                          &cell_str))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_polyfill_yx arguments");
+        return NULL;
+    }
+    cell cell_to_fill_with = CELL_CHAR_INITIALIZER(*cell_str);
+    int return_code = ncplane_polyfill_yx(nc_plane_ref->ncplane_ptr, y_dim, x_dim, &cell_to_fill_with);
+    if (return_code != -1)
+    {
+        return PyLong_FromLong((long)return_code);
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to polyfill");
+        return NULL;
+    }
+}
+
+static PyObject *
+_nc_plane_erase(PyObject *self, PyObject *args)
+{
+    NcPlaneObject *nc_plane_ref = NULL;
+    if (!PyArg_ParseTuple(args, "O!", &NcPlaneType, &nc_plane_ref))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _notcurses_context_get_input_blocking arguments");
+        return NULL;
+    }
+    ncplane_erase(nc_plane_ref->ncplane_ptr);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
 get_notcurses_version_str(PyObject *self, PyObject *args)
 {
     const char *verstion_str = notcurses_version();
@@ -759,6 +800,8 @@ static PyMethodDef NotcursesMethods[] = {
     {"_nc_plane_set_foreground_rgb", (PyCFunction)_nc_plane_set_foreground_rgb, METH_VARARGS, NULL},
     {"_nc_plane_putstr", (PyCFunction)_nc_plane_putstr, METH_VARARGS, NULL},
     {"_nc_plane_dimensions_yx", (PyCFunction)_nc_plane_dimensions_yx, METH_VARARGS, NULL},
+    {"_nc_plane_polyfill_yx", (PyCFunction)_nc_plane_polyfill_yx, METH_VARARGS, NULL},
+    {"_nc_plane_erase", (PyCFunction)_nc_plane_erase, METH_VARARGS, NULL},
     {"_notcurses_context_get_input_blocking", (PyCFunction)_notcurses_context_get_input_blocking, METH_VARARGS, NULL},
     {"get_notcurses_version", (PyCFunction)get_notcurses_version_str, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL},
