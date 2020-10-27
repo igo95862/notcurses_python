@@ -33,6 +33,7 @@
 * ncplane_yx
 * ncplane_create
 * ncplane_dim_yx
+* ncplane_erase
 
 ## NcMenu
 
