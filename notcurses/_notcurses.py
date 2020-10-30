@@ -179,6 +179,13 @@ def _nc_plane_erase(nc_plane: _NcPlane, /) -> None:
     ...
 
 
+def _nc_plane_create(
+        nc_plane: _NcPlane,
+        y_pos: int, x_pos: int,
+        rows_num: int, cols_num: int, /) -> _NcPlane:
+    ...
+
+
 def get_notcurses_version() -> str:
     """Returns notcurses version from library"""
     ...

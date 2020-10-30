@@ -33,7 +33,7 @@ from ._notcurses import (_nc_channels_set_background_rgb,
                          _notcurses_context_mouse_disable,
                          _notcurses_context_mouse_enable,
                          _notcurses_context_render, _notcurses_context_stop,
-                         _NotcursesContext)
+                         _NotcursesContext, _nc_plane_create)
 
 
 class NotcursesContext:
@@ -143,6 +143,29 @@ class NcPlane:
 
     def render(self) -> None:
         self.parent.render()
+
+    def create_sub_plane(
+        self,
+        y_pos: int = 0,
+        x_pos: int = 0,
+        rows_num: Optional[int] = None,
+        cols_num: Optional[int] = None
+    ) -> NcPlane:
+
+        if cols_num is None:
+            y_dim, _ = self.dimensions_yx
+            cols_num = y_dim // 2
+
+        if rows_num is None:
+            _, x_dim = self.dimensions_yx
+            rows_num = x_dim
+
+        new_plane = _nc_plane_create(
+            self._nc_plane,
+            y_pos, x_pos, rows_num, cols_num
+        )
+
+        return NcPlane(new_plane, self.parent)
 
 
 _default_context: Optional[NotcursesContext] = None

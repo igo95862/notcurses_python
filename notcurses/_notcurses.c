@@ -769,6 +769,40 @@ _nc_plane_erase(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+static NcPlaneObject *
+_nc_plane_create(PyObject *self, PyObject *args)
+{
+    NcPlaneObject *nc_plane_parent = NULL;
+    int y_pos, x_pos, rows_num, cols_num;
+    if (!PyArg_ParseTuple(args, "O!iiii",
+                          &NcPlaneType, &nc_plane_parent,
+                          &y_pos, &x_pos,
+                          &rows_num, &cols_num))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_create arguments");
+        return NULL;
+    }
+    ncplane_options create_options = {
+        .y = y_pos,
+        .horiz.x = x_pos,
+        .rows = rows_num,
+        .cols = cols_num,
+    };
+    struct ncplane *new_nc_plane = ncplane_create(nc_plane_parent->ncplane_ptr, &create_options);
+    if (new_nc_plane != NULL)
+    {
+        NcPlaneObject *ncplane_ref = PyObject_NEW(NcPlaneObject, &NcPlaneType);
+
+        ncplane_ref->ncplane_ptr = new_nc_plane;
+        return ncplane_ref;
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to create NcPlane");
+        return NULL;
+    }
+}
+
 static PyObject *
 get_notcurses_version_str(PyObject *self, PyObject *args)
 {
@@ -802,6 +836,7 @@ static PyMethodDef NotcursesMethods[] = {
     {"_nc_plane_dimensions_yx", (PyCFunction)_nc_plane_dimensions_yx, METH_VARARGS, NULL},
     {"_nc_plane_polyfill_yx", (PyCFunction)_nc_plane_polyfill_yx, METH_VARARGS, NULL},
     {"_nc_plane_erase", (PyCFunction)_nc_plane_erase, METH_VARARGS, NULL},
+    {"_nc_plane_create", (PyCFunction)_nc_plane_create, METH_VARARGS, NULL},
     {"_notcurses_context_get_input_blocking", (PyCFunction)_notcurses_context_get_input_blocking, METH_VARARGS, NULL},
     {"get_notcurses_version", (PyCFunction)get_notcurses_version_str, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL},
