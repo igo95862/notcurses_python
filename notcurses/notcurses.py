@@ -116,9 +116,9 @@ class NcInput:
 
 
 class NcPlane:
-    def __init__(self, plane: _NcPlane, parent: NotcursesContext) -> None:
+    def __init__(self, plane: _NcPlane, context: NotcursesContext) -> None:
         self._nc_plane = plane
-        self.parent = parent
+        self.context = context
 
     @property
     def dimensions_yx(self) -> Tuple[int, int]:
@@ -146,9 +146,6 @@ class NcPlane:
             self, red: int, green: int, blue: int) -> None:
         _nc_plane_set_foreground_rgb(self._nc_plane, red, green, blue)
 
-    def render(self) -> None:
-        self.parent.render()
-
     def create_sub_plane(
         self,
         y_pos: int = 0,
@@ -170,7 +167,7 @@ class NcPlane:
             y_pos, x_pos, rows_num, cols_num
         )
 
-        return NcPlane(new_plane, self.parent)
+        return NcPlane(new_plane, self.context)
 
 
 _default_context: Optional[NotcursesContext] = None

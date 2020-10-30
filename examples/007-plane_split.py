@@ -32,6 +32,6 @@ sub_plane_left.putstr("Left")
 sub_plane_right.set_foreground_rgb(255, 0, 0)
 sub_plane_right.putstr("Right")
 
-std_plane.render()
+std_plane.context.render()
 
 sleep(4)

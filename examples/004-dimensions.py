@@ -39,6 +39,6 @@ for y in range(y_dimension):
                 red = (red + 2) % 256
 
 
-std_plane.render()
+std_plane.context.render()
 
 sleep(5)

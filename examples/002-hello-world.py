@@ -21,6 +21,6 @@ from notcurses import get_std_plane
 std_plane = get_std_plane()
 std_plane.putstr("Hello, World!")
 
-std_plane.render()
+std_plane.context.render()
 
 sleep(5)

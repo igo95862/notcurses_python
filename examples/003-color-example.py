@@ -31,6 +31,6 @@ std_plane.set_background_rgb(0, 0, 0)
 std_plane.set_foreground_rgb(255, 0, 255)
 std_plane.putstr("Purple on black", y_pos=2, x_pos=0)
 
-std_plane.render()
+std_plane.context.render()
 
 sleep(5)
