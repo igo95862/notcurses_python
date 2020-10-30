@@ -16,9 +16,7 @@
 
 
 from notcurses import get_std_plane
-from notcurses._notcurses import _NcInput
 
-i = _NcInput()
 std_plane = get_std_plane()
 std_plane.putstr("Enter string!")
 
@@ -41,5 +39,3 @@ while True:
     std_plane.putstr("Press CTRL+C to exit.", y_pos=7, x_pos=0)
 
     std_plane.render()
-
-std_plane.parent.stop()
