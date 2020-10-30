@@ -15,15 +15,17 @@
 # limitations under the License.
 from __future__ import annotations
 
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
+from . import _notcurses
 from ._notcurses import (_nc_channels_set_background_rgb,
                          _nc_channels_set_foreground_rgb,
                          _nc_direct_disable_cursor, _nc_direct_enable_cursor,
                          _nc_direct_get_dim_x, _nc_direct_get_dim_y,
                          _nc_direct_init, _nc_direct_putstr, _nc_direct_stop,
-                         _nc_plane_dimensions_yx, _nc_plane_erase,
-                         _nc_plane_putstr, _nc_plane_set_background_rgb,
+                         _nc_plane_create, _nc_plane_dimensions_yx,
+                         _nc_plane_erase, _nc_plane_putstr,
+                         _nc_plane_set_background_rgb,
                          _nc_plane_set_foreground_rgb, _NcChannels, _NcDirect,
                          _NcInput, _NcPlane, _notcurses_context_cursor_disable,
                          _notcurses_context_cursor_enable,
@@ -33,7 +35,7 @@ from ._notcurses import (_nc_channels_set_background_rgb,
                          _notcurses_context_mouse_disable,
                          _notcurses_context_mouse_enable,
                          _notcurses_context_render, _notcurses_context_stop,
-                         _NotcursesContext, _nc_plane_create)
+                         _NotcursesContext)
 
 
 class NotcursesContext:
@@ -83,7 +85,10 @@ class NcInput:
 
     @property
     def code(self) -> str:
-        return chr(self._nc_input.codepoint)
+        try:
+            return NC_INPUT_CODES[self._nc_input.codepoint]
+        except KeyError:
+            return chr(self._nc_input.codepoint)
 
     @property
     def y_pos(self) -> int:
@@ -245,3 +250,59 @@ class NcDirect:
             _nc_direct_enable_cursor(self._nc_direct)
         else:
             _nc_direct_disable_cursor(self._nc_direct)
+
+
+NC_INPUT_KEYS: Dict[str, int] = {
+    'invalid': _notcurses.NCKEY_INVALID,
+    'up': _notcurses.NCKEY_UP,
+    'resize': _notcurses.NCKEY_RESIZE,
+    'right': _notcurses.NCKEY_RIGHT,
+    'down': _notcurses.NCKEY_DOWN,
+    'left': _notcurses.NCKEY_LEFT,
+    'insert': _notcurses.NCKEY_INS,
+    'delete': _notcurses.NCKEY_DEL,
+    'backspace': _notcurses.NCKEY_BACKSPACE,
+    'page_down': _notcurses.NCKEY_PGDOWN,
+    'page_up': _notcurses.NCKEY_PGUP,
+    'home': _notcurses.NCKEY_HOME,
+    'ebd': _notcurses.NCKEY_END,
+    'f0': _notcurses.NCKEY_F00,
+    'f1': _notcurses.NCKEY_F01,
+    'f2': _notcurses.NCKEY_F02,
+    'f3': _notcurses.NCKEY_F03,
+    'f4': _notcurses.NCKEY_F04,
+    'f5': _notcurses.NCKEY_F05,
+    'f6': _notcurses.NCKEY_F06,
+    'f7': _notcurses.NCKEY_F07,
+    'f8': _notcurses.NCKEY_F08,
+    'f9': _notcurses.NCKEY_F09,
+    'f10': _notcurses.NCKEY_F10,
+    'f11': _notcurses.NCKEY_F11,
+    'f12': _notcurses.NCKEY_F12,
+    'enter': _notcurses.NCKEY_ENTER,
+    'caps_locl': _notcurses.NCKEY_CLS,
+    'down_left': _notcurses.NCKEY_DLEFT,
+    'down_right': _notcurses.NCKEY_DRIGHT,
+    'up_left': _notcurses.NCKEY_ULEFT,
+    'up_right': _notcurses.NCKEY_URIGHT,
+    'center': _notcurses.NCKEY_CENTER,
+    'begin': _notcurses.NCKEY_BEGIN,
+    'cancel': _notcurses.NCKEY_CANCEL,
+    'close': _notcurses.NCKEY_CLOSE,
+    'command': _notcurses.NCKEY_COMMAND,
+    'copy': _notcurses.NCKEY_COPY,
+    'exit': _notcurses.NCKEY_EXIT,
+    'print': _notcurses.NCKEY_PRINT,
+    'refresh': _notcurses.NCKEY_REFRESH,
+    'mouse_left_button': _notcurses.NCKEY_BUTTON1,
+    'mouse_middle_button': _notcurses.NCKEY_BUTTON2,
+    'mouse_right_button': _notcurses.NCKEY_BUTTON3,
+    'mouse_scroll_up': _notcurses.NCKEY_SCROLL_UP,
+    'mouse_scroll_down': _notcurses.NCKEY_SCROLL_DOWN,
+    'mouse_6': _notcurses.NCKEY_BUTTON6,
+    'mouse_release': _notcurses.NCKEY_RELEASE,
+}
+
+NC_INPUT_CODES: Dict[int, str] = {
+    value: key for key, value in NC_INPUT_KEYS.items()
+}

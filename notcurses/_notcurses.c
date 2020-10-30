@@ -914,5 +914,71 @@ PyInit__notcurses(void)
         return NULL;
     }
 
+    // Constants PyModule_AddIntMacro(py_module, );
+    int constants_control_value = 0;
+    // Inputs
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_INVALID);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_RESIZE);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_UP);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_RIGHT);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_DOWN);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_LEFT);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_INS);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_DEL);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_BACKSPACE);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_PGDOWN);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_PGUP);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_HOME);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_END);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F00);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F01);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F02);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F03);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F04);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F05);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F06);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F07);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F08);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F09);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F10);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F11);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_F12);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_ENTER);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_CLS);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_DLEFT);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_DRIGHT);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_ULEFT);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_URIGHT);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_CENTER);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_BEGIN);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_CANCEL);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_CLOSE);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_COMMAND);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_COPY);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_EXIT);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_PRINT);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_REFRESH);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_BUTTON1);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_BUTTON2);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_BUTTON3);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_SCROLL_UP);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_SCROLL_DOWN);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_BUTTON6);
+    constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_RELEASE);
+    // Nc Allign
+    constants_control_value |= PyModule_AddIntConstant(py_module, "NCALIGN_UNALIGNED", NCALIGN_UNALIGNED);
+    constants_control_value |= PyModule_AddIntConstant(py_module, "NCALIGN_LEFT", NCALIGN_LEFT);
+    constants_control_value |= PyModule_AddIntConstant(py_module, "NCALIGN_CENTER", NCALIGN_CENTER);
+    constants_control_value |= PyModule_AddIntConstant(py_module, "NCALIGN_RIGHT", NCALIGN_RIGHT);
+    // Scale
+    constants_control_value |= PyModule_AddIntConstant(py_module, "NCSCALE_NONE", NCSCALE_NONE);
+    constants_control_value |= PyModule_AddIntConstant(py_module, "NCSCALE_SCALE", NCSCALE_SCALE);
+    constants_control_value |= PyModule_AddIntConstant(py_module, "NCSCALE_STRETCH", NCSCALE_STRETCH);
+    if (constants_control_value < 0)
+    {
+        Py_DECREF(py_module);
+        return NULL;
+    }
+
     return py_module;
 }

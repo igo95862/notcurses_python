@@ -189,3 +189,62 @@ def _nc_plane_create(
 def get_notcurses_version() -> str:
     """Returns notcurses version from library"""
     ...
+
+
+NCKEY_INVALID: int
+NCKEY_UP: int
+NCKEY_RESIZE: int
+NCKEY_RIGHT: int
+NCKEY_DOWN: int
+NCKEY_LEFT: int
+NCKEY_INS: int
+NCKEY_DEL: int
+NCKEY_BACKSPACE: int
+NCKEY_PGDOWN: int
+NCKEY_PGUP: int
+NCKEY_HOME: int
+NCKEY_END: int
+NCKEY_F00: int
+NCKEY_F01: int
+NCKEY_F02: int
+NCKEY_F03: int
+NCKEY_F04: int
+NCKEY_F05: int
+NCKEY_F06: int
+NCKEY_F07: int
+NCKEY_F08: int
+NCKEY_F09: int
+NCKEY_F10: int
+NCKEY_F11: int
+NCKEY_F12: int
+NCKEY_ENTER: int
+NCKEY_CLS: int
+NCKEY_DLEFT: int
+NCKEY_DRIGHT: int
+NCKEY_ULEFT: int
+NCKEY_URIGHT: int
+NCKEY_CENTER: int
+NCKEY_BEGIN: int
+NCKEY_CANCEL: int
+NCKEY_CLOSE: int
+NCKEY_COMMAND: int
+NCKEY_COPY: int
+NCKEY_EXIT: int
+NCKEY_PRINT: int
+NCKEY_REFRESH: int
+NCKEY_BUTTON1: int
+NCKEY_BUTTON2: int
+NCKEY_BUTTON3: int
+NCKEY_SCROLL_UP: int
+NCKEY_SCROLL_DOWN: int
+NCKEY_BUTTON6: int
+NCKEY_RELEASE: int
+
+NCALIGN_UNALIGNED: int
+NCALIGN_LEFT: int
+NCALIGN_CENTER: int
+NCALIGN_RIGHT: int
+
+NCSCALE_NONE: int
+NCSCALE_SCALE: int
+NCSCALE_STRETCH: int
