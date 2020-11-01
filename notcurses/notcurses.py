@@ -15,6 +15,7 @@
 # limitations under the License.
 from __future__ import annotations
 
+from enum import IntEnum
 from typing import Dict, Optional, Tuple
 
 from . import _notcurses
@@ -25,6 +26,7 @@ from ._notcurses import (_nc_channels_set_background_rgb,
                          _nc_direct_init, _nc_direct_putstr, _nc_direct_stop,
                          _nc_plane_create, _nc_plane_dimensions_yx,
                          _nc_plane_erase, _nc_plane_putstr,
+                         _nc_plane_putstr_alligned,
                          _nc_plane_set_background_rgb,
                          _nc_plane_set_foreground_rgb, _NcChannels, _NcDirect,
                          _NcInput, _NcPlane, _notcurses_context_cursor_disable,
@@ -36,6 +38,13 @@ from ._notcurses import (_nc_channels_set_background_rgb,
                          _notcurses_context_mouse_enable,
                          _notcurses_context_render, _notcurses_context_stop,
                          _NotcursesContext)
+
+
+class NcAllign(IntEnum):
+    UNALLIGNED = _notcurses.NCALIGN_UNALIGNED
+    LEFT = _notcurses.NCALIGN_LEFT
+    CENTER = _notcurses.NCALIGN_CENTER
+    RIGHT = _notcurses.NCALIGN_RIGHT
 
 
 class NotcursesContext:
@@ -133,6 +142,17 @@ class NcPlane:
             string,
             y_pos,
             x_pos,
+        )
+
+    def putstr_alligned(self,
+                        string: str,
+                        y_pos: int = -1,
+                        allign: NcAllign = NcAllign.UNALLIGNED) -> None:
+        _nc_plane_putstr_alligned(
+            self._nc_plane,
+            string,
+            y_pos,
+            allign,
         )
 
     def erase(self) -> None:

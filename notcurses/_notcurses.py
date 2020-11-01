@@ -165,6 +165,12 @@ def _nc_plane_putstr(
     ...
 
 
+def _nc_plane_putstr_alligned(
+        nc_plane: _NcPlane, string: str,
+        y_pos: int, allign: int, /) -> None:
+    ...
+
+
 def _nc_plane_dimensions_yx(nc_plane: _NcPlane, /) -> Tuple[int, int]:
     ...
 

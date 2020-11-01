@@ -706,6 +706,31 @@ _nc_plane_putstr(PyObject *self, PyObject *args)
 }
 
 static PyObject *
+_nc_plane_putstr_alligned(PyObject *self, PyObject *args)
+{
+    NcPlaneObject *nc_plane_ref = NULL;
+    int y_pos = -1;
+    ncalign_e allign = NCALIGN_UNALIGNED;
+    const char *string = NULL;
+    if (!PyArg_ParseTuple(args, "O!sii",
+                          &NcPlaneType, &nc_plane_ref,
+                          &string,
+                          &y_pos, &allign))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_putstr_alligned arguments");
+        return NULL;
+    }
+
+    int return_code = ncplane_putstr_aligned(nc_plane_ref->ncplane_ptr, y_pos, allign, string);
+    if (return_code < 0)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Failed to put string");
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+static PyObject *
 _nc_plane_dimensions_yx(PyObject *self, PyObject *args)
 {
     NcPlaneObject *nc_plane_ref = NULL;
@@ -833,6 +858,7 @@ static PyMethodDef NotcursesMethods[] = {
     {"_nc_plane_set_background_rgb", (PyCFunction)_nc_plane_set_background_rgb, METH_VARARGS, NULL},
     {"_nc_plane_set_foreground_rgb", (PyCFunction)_nc_plane_set_foreground_rgb, METH_VARARGS, NULL},
     {"_nc_plane_putstr", (PyCFunction)_nc_plane_putstr, METH_VARARGS, NULL},
+    {"_nc_plane_putstr_alligned", (PyCFunction)_nc_plane_putstr_alligned, METH_VARARGS, NULL},
     {"_nc_plane_dimensions_yx", (PyCFunction)_nc_plane_dimensions_yx, METH_VARARGS, NULL},
     {"_nc_plane_polyfill_yx", (PyCFunction)_nc_plane_polyfill_yx, METH_VARARGS, NULL},
     {"_nc_plane_erase", (PyCFunction)_nc_plane_erase, METH_VARARGS, NULL},
