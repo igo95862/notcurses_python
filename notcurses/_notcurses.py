@@ -161,13 +161,13 @@ def _nc_plane_set_foreground_rgb(
 
 def _nc_plane_putstr(
         nc_plane: _NcPlane, string: str,
-        y_pos: int, x_pos: int, /) -> None:
+        y_pos: int, x_pos: int, /) -> int:
     ...
 
 
 def _nc_plane_putstr_alligned(
         nc_plane: _NcPlane, string: str,
-        y_pos: int, allign: int, /) -> None:
+        y_pos: int, allign: int, /) -> int:
     ...
 
 

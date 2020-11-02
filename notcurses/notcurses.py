@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Iterable
 
 from . import _notcurses
 from ._notcurses import (_nc_channels_set_background_rgb,
@@ -136,8 +136,8 @@ class NcPlane:
     def putstr(
             self,
             string: str,
-            y_pos: int = -1, x_pos: int = -1) -> None:
-        _nc_plane_putstr(
+            y_pos: int = -1, x_pos: int = -1) -> int:
+        return _nc_plane_putstr(
             self._nc_plane,
             string,
             y_pos,
@@ -147,13 +147,30 @@ class NcPlane:
     def putstr_alligned(self,
                         string: str,
                         y_pos: int = -1,
-                        allign: NcAllign = NcAllign.UNALLIGNED) -> None:
-        _nc_plane_putstr_alligned(
+                        allign: NcAllign = NcAllign.UNALLIGNED) -> int:
+        return _nc_plane_putstr_alligned(
             self._nc_plane,
             string,
             y_pos,
             allign,
         )
+
+    def put_lines(
+        self, lines_iter: Iterable[str], wrap_lines: bool = False
+    ) -> None:
+        y_pos = 0
+
+        for line in lines_iter:
+            chars_put = self.putstr(line, y_pos, 0)
+            y_pos += 1
+
+            if not wrap_lines:
+                continue
+
+            while chars_put < 0:
+                line = line[abs(chars_put):]
+                chars_put = self.putstr(line, y_pos, 0)
+                y_pos += 1
 
     def erase(self) -> None:
         return _nc_plane_erase(self._nc_plane)

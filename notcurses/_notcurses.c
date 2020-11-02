@@ -697,12 +697,7 @@ _nc_plane_putstr(PyObject *self, PyObject *args)
     }
 
     int return_code = ncplane_putstr_yx(nc_plane_ref->ncplane_ptr, y_pos, x_pos, string);
-    if (return_code < 0)
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Failed to put string");
-        return NULL;
-    }
-    Py_RETURN_NONE;
+    return PyLong_FromLong(return_code);
 }
 
 static PyObject *
@@ -722,12 +717,7 @@ _nc_plane_putstr_alligned(PyObject *self, PyObject *args)
     }
 
     int return_code = ncplane_putstr_aligned(nc_plane_ref->ncplane_ptr, y_pos, allign, string);
-    if (return_code < 0)
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Failed to put string");
-        return NULL;
-    }
-    Py_RETURN_NONE;
+    return PyLong_FromLong(return_code);
 }
 
 static PyObject *
