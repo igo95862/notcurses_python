@@ -161,6 +161,7 @@ class NcPlane:
         y_pos = 0
 
         for line in lines_iter:
+            # TODO: needs to stop if we are outside the plane
             chars_put = self.putstr(line, y_pos, 0)
             y_pos += 1
 
