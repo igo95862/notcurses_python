@@ -13,6 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""
+Notcurses python module
+"""
 from __future__ import annotations
 
 from enum import IntEnum
@@ -41,6 +44,14 @@ from ._notcurses import (_nc_channels_set_background_rgb,
 
 
 class NcAlign(IntEnum):
+    """
+    Enum containing alignment types
+
+    :cvar UNALIGNED: No alignment
+    :cvar LEFT: Left alignment
+    :cvar CENTER: Center alignment
+    :cvar RIGHT: Right alignment
+    """
     UNALIGNED = _notcurses.NCALIGN_UNALIGNED
     LEFT = _notcurses.NCALIGN_LEFT
     CENTER = _notcurses.NCALIGN_CENTER
@@ -48,39 +59,76 @@ class NcAlign(IntEnum):
 
 
 class NotcursesContext:
+    """
+    Notcurses Context
+
+    This class controls the attached terminal and should only be
+    initialized once per terminal.
+
+    Using :py:func:`get_std_plane` is recommended in most cases instead
+    of directly initialzing the context.
+    """
+
     def __init__(self,
                  start_immideatly: bool = True):
+        """
+        Create the context
+
+        :param bool start_immideatly: Whether or not to acquire the terminal
+        """
         self._nc_context = _NotcursesContext()
         self._has_started = False
         if start_immideatly:
             self.start()
 
     def render(self) -> None:
+        """
+        Updates the terminal window with the actual content
+        This should be called after the you have filled the
+        plane with such function as :py:meth:`NcPlane.put_lines`
+
+        .. warning::
+            This method is not thread safe.
+        """
         _notcurses_context_render(self._nc_context)
 
     def start(self) -> None:
+        """Notcurses acquires the terminal."""
         _notcurses_context_init(self._nc_context)
         self._has_started = True
 
     def stop(self) -> None:
+        """
+        Notcurses releases the terminal.
+
+        This will be automatically called with the context object
+        gets garbage collected.
+        """
         _notcurses_context_stop(self._nc_context)
         self._has_started = False
 
     def get_input_blocking(self) -> NcInput:
+        """
+        Waits syncronosly for an :py:class:`NcInput` event.
+        """
         return NcInput(
             _notcurses_context_get_input_blocking(self._nc_context)
         )
 
     def enable_mouse(self) -> None:
+        """Enables mouse on the terminal"""
         _notcurses_context_mouse_enable(self._nc_context)
 
     def disable_mouse(self) -> None:
+        """Disables mouse on the terminal"""
         _notcurses_context_mouse_disable(self._nc_context)
 
     def enable_cursor(self) -> None:
+        """Enables cursor on the terminal"""
         _notcurses_context_cursor_enable(self._nc_context, 0, 0)
 
     def disable_cursor(self) -> None:
+        """Disables cursor on the terminal"""
         _notcurses_context_cursor_disable(self._nc_context)
 
     def __del__(self) -> None:
@@ -89,11 +137,23 @@ class NotcursesContext:
 
 
 class NcInput:
+    """Represents an input event"""
+
     def __init__(self, nc_input: _NcInput):
         self._nc_input = nc_input
 
     @property
     def code(self) -> str:
+        """
+        Either a single character or a string with an input key name
+
+        For example, `q` represents a button Q on keyboard.
+        `mouse_left_button` represents left mouse button click.
+
+        The keys refrences can be found in :py:obj:`NC_INPUT_KEYS`
+
+        :rtype: str
+        """
         try:
             return NC_INPUT_CODES[self._nc_input.codepoint]
         except KeyError:
@@ -101,42 +161,96 @@ class NcInput:
 
     @property
     def y_pos(self) -> int:
+        """
+        Y position of event
+
+        :rtype: int
+        """
         return self._nc_input.y_pos
 
     @property
     def x_pos(self) -> int:
+        """
+        X position of event
+
+        :rtype: int
+        """
         return self._nc_input.x_pos
 
     @property
     def is_alt(self) -> bool:
+        """
+        Was Alt key pressed during event?
+
+        :rtype: bool
+        """
         return self._nc_input.is_alt
 
     @property
     def is_shift(self) -> bool:
+        """
+        Was Shift key pressed during event?
+
+        :rtype: bool
+        """
         return self._nc_input.is_shift
 
     @property
     def is_ctrl(self) -> bool:
+        """
+        Was Ctrl key pressed during event?
+
+        :rtype: bool
+        """
         return self._nc_input.is_ctrl
 
     @property
     def seqnum(self) -> int:
+        """
+        Sequence number
+
+        :rtype: int
+        """
         return self._nc_input.seqnum
 
 
 class NcPlane:
+    """Class representing a drawing surface"""
+
     def __init__(self, plane: _NcPlane, context: NotcursesContext) -> None:
+        """
+        NcPlane should not be initialized directly by user.
+        Use :py:meth:`NcPlane.create_sub_plane` to create sub planes from the
+        standard plane
+        """
         self._nc_plane = plane
         self.context = context
 
     @property
     def dimensions_yx(self) -> Tuple[int, int]:
+        """
+        Returns Y and X dimensions of the plane
+
+        :rtype: Tuple[int, int]
+        """
         return _nc_plane_dimensions_yx(self._nc_plane)
 
     def putstr(
             self,
             string: str,
             y_pos: int = -1, x_pos: int = -1) -> int:
+        """
+        Puts a string on the plane
+
+        :param str string: String to put
+        :param int y_pos: Y position to put string.
+            By default is the cursor position.
+        :param int x_pos: X position to put string.
+            By default is the cursor position.
+        :returns: Number of characters written.
+            Negative if some characters could not be written.
+        :rtype: int
+        """
         return _nc_plane_putstr(
             self._nc_plane,
             string,
@@ -148,6 +262,18 @@ class NcPlane:
                         string: str,
                         y_pos: int = -1,
                         align: NcAlign = NcAlign.UNALIGNED) -> int:
+        """
+        Puts a string on the plane with specified alignment
+        instead of X coordinate
+
+        :param str string: String to put
+        :param int y_pos: Y position to put string.
+            By default is the cursor position.
+        :param NcAlign align: Use specific alignment.
+        :returns: Number of characters written.
+            Negative if some characters could not be written.
+        :rtype: int
+        """
         return _nc_plane_putstr_alligned(
             self._nc_plane,
             string,
@@ -158,6 +284,14 @@ class NcPlane:
     def put_lines(
         self, lines_iter: Iterable[str], wrap_lines: bool = False
     ) -> None:
+        """
+        Puts string from the iterator on the plane.
+        Each string is put on a new line.
+
+        :param iter[str] lines_iter: Iterator of lines to put on the plane
+        :param bool wrap_lines: If line is longer that the surface
+            should it be continued on the next line? Default false.
+        """
         y_pos = 0
 
         for line in lines_iter:
@@ -174,14 +308,29 @@ class NcPlane:
                 y_pos += 1
 
     def erase(self) -> None:
+        """Remove all symbols from plane"""
         return _nc_plane_erase(self._nc_plane)
 
     def set_background_rgb(
             self, red: int, green: int, blue: int) -> None:
+        """
+        Sets the background color
+
+        :param int red: Red color component given as integer from 0 to 255
+        :param int green: Green color component given as integer from 0 to 255
+        :param int blue: Blue color component given as integer from 0 to 255
+        """
         _nc_plane_set_background_rgb(self._nc_plane, red, green, blue)
 
     def set_foreground_rgb(
             self, red: int, green: int, blue: int) -> None:
+        """
+        Sets the foreground color
+
+        :param int red: Red color component given as integer from 0 to 255
+        :param int green: Green color component given as integer from 0 to 255
+        :param int blue: Blue color component given as integer from 0 to 255
+        """
         _nc_plane_set_foreground_rgb(self._nc_plane, red, green, blue)
 
     def create_sub_plane(
@@ -191,6 +340,20 @@ class NcPlane:
         rows_num: Optional[int] = None,
         cols_num: Optional[int] = None
     ) -> NcPlane:
+        """
+        Creates a new plane within this plane
+
+        :param int y_pos: top left corner Y coordinate
+            relative to top left corner of parent
+
+        :param int y_pos: top left corner X coordinate
+            relative to top left corner of parent
+
+        :param int rows_num: Number of rows (i.e. Y size)
+        :param int cols_num: Number of collumns (i.e. X size)
+        :retuns: New plane
+        :rtype: NcPlane
+        """
 
         if cols_num is None:
             y_dim, _ = self.dimensions_yx
@@ -212,6 +375,16 @@ _default_context: Optional[NotcursesContext] = None
 
 
 def get_std_plane() -> NcPlane:
+    """
+    Initializes context and returns the standard plane.
+
+    .. warning::
+        The terminal will be acquired by notcurses and uncontrollable until
+        the standard plane will be dereferenced.
+
+    :return: Standard plane of the terminal
+    :rtype: NcPlane
+    """
     global _default_context
     if _default_context is None:
         _default_context = NotcursesContext()
