@@ -705,18 +705,18 @@ _nc_plane_putstr_alligned(PyObject *self, PyObject *args)
 {
     NcPlaneObject *nc_plane_ref = NULL;
     int y_pos = -1;
-    ncalign_e allign = NCALIGN_UNALIGNED;
+    ncalign_e align = NCALIGN_UNALIGNED;
     const char *string = NULL;
     if (!PyArg_ParseTuple(args, "O!sii",
                           &NcPlaneType, &nc_plane_ref,
                           &string,
-                          &y_pos, &allign))
+                          &y_pos, &align))
     {
         PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_putstr_alligned arguments");
         return NULL;
     }
 
-    int return_code = ncplane_putstr_aligned(nc_plane_ref->ncplane_ptr, y_pos, allign, string);
+    int return_code = ncplane_putstr_aligned(nc_plane_ref->ncplane_ptr, y_pos, align, string);
     return PyLong_FromLong(return_code);
 }
 
@@ -981,7 +981,7 @@ PyInit__notcurses(void)
     constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_SCROLL_DOWN);
     constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_BUTTON6);
     constants_control_value |= PyModule_AddIntMacro(py_module, NCKEY_RELEASE);
-    // Nc Allign
+    // Nc Align
     constants_control_value |= PyModule_AddIntConstant(py_module, "NCALIGN_UNALIGNED", NCALIGN_UNALIGNED);
     constants_control_value |= PyModule_AddIntConstant(py_module, "NCALIGN_LEFT", NCALIGN_LEFT);
     constants_control_value |= PyModule_AddIntConstant(py_module, "NCALIGN_CENTER", NCALIGN_CENTER);

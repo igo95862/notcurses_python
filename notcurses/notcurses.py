@@ -40,8 +40,8 @@ from ._notcurses import (_nc_channels_set_background_rgb,
                          _NotcursesContext)
 
 
-class NcAllign(IntEnum):
-    UNALLIGNED = _notcurses.NCALIGN_UNALIGNED
+class NcAlign(IntEnum):
+    UNALIGNED = _notcurses.NCALIGN_UNALIGNED
     LEFT = _notcurses.NCALIGN_LEFT
     CENTER = _notcurses.NCALIGN_CENTER
     RIGHT = _notcurses.NCALIGN_RIGHT
@@ -147,12 +147,12 @@ class NcPlane:
     def putstr_alligned(self,
                         string: str,
                         y_pos: int = -1,
-                        allign: NcAllign = NcAllign.UNALLIGNED) -> int:
+                        align: NcAlign = NcAlign.UNALIGNED) -> int:
         return _nc_plane_putstr_alligned(
             self._nc_plane,
             string,
             y_pos,
-            allign,
+            align,
         )
 
     def put_lines(
