@@ -66,7 +66,7 @@ class NotcursesContext:
     initialized once per terminal.
 
     Using :py:func:`get_std_plane` is recommended in most cases instead
-    of directly initialzing the context.
+    of directly initializing the context.
     """
 
     def __init__(self,
@@ -150,7 +150,7 @@ class NcInput:
         For example, `q` represents a button Q on keyboard.
         `NcInputCodes.MOUSE_LEFT_BUTTON` represents left mouse button click.
 
-        The keys refrences can be found in :py:class:`NcInputCodes`
+        The keys references can be found in :py:class:`NcInputCodes`
 
         :rtype: Union[str, NcInputCodes]
         """
@@ -350,8 +350,8 @@ class NcPlane:
             relative to top left corner of parent
 
         :param int rows_num: Number of rows (i.e. Y size)
-        :param int cols_num: Number of collumns (i.e. X size)
-        :retuns: New plane
+        :param int cols_num: Number of columns (i.e. X size)
+        :returns: New plane
         :rtype: NcPlane
         """
 
@@ -395,16 +395,36 @@ def get_std_plane() -> NcPlane:
 
 
 class NcChannels:
+    """
+    Class that hold the colors and transparency values
+
+    Can be used in some functions instead of directly specifying colors.
+    """
+
     def __init__(self) -> None:
         self._nc_channels = _NcChannels()
 
     def set_background_rgb(self, red: int, green: int, blue: int) -> None:
+        """
+        Sets the background color
+
+        :param int red: Red color component given as integer from 0 to 255
+        :param int green: Green color component given as integer from 0 to 255
+        :param int blue: Blue color component given as integer from 0 to 255
+        """
         _nc_channels_set_background_rgb(
             self._nc_channels,
             red, green, blue,
         )
 
     def set_foreground_rgb(self, red: int, green: int, blue: int) -> None:
+        """
+        Sets the foreground color
+
+        :param int red: Red color component given as integer from 0 to 255
+        :param int green: Green color component given as integer from 0 to 255
+        :param int blue: Blue color component given as integer from 0 to 255
+        """
         _nc_channels_set_foreground_rgb(
             self._nc_channels,
             red, green, blue,
@@ -412,8 +432,22 @@ class NcChannels:
 
 
 class NcDirect:
+    """
+    NcDirect is a subset of Notcurses.
+    It does not clear entire terminal but instead draws on to normal
+    terminal surface. That means the output is preserved after the application
+    has exited and can be scrolled back.
+
+    NcDirect has only one main plane.
+    """
+
     def __init__(self,
                  start_immideatly: bool = True):
+        """
+        Create the main direct plane.
+
+        :param bool start_immideatly: Whether or not to acquire the terminal
+        """
         self._nc_direct = _NcDirect()
         self._is_cursor_enabled: Optional[bool] = None
         self._has_started = False
@@ -429,11 +463,24 @@ class NcDirect:
         self._has_started = True
 
     def stop(self) -> None:
+        """
+        Stop Notcurses
+
+        Will be automatically called if NcDirect object gets garbage collected
+        """
         _nc_direct_stop(self._nc_direct)
 
     def putstr(
             self, string: str,
             nc_channels: Optional[NcChannels] = None) -> int:
+        """
+        Puts a string on the plane
+
+        :param Optional[NcChannels] nc_channels: The colors string will use
+        :returns: Number of characters written.
+            Negative if some characters could not be written.
+        :rtype: int
+        """
 
         return _nc_direct_putstr(
             self._nc_direct,
@@ -444,15 +491,28 @@ class NcDirect:
 
     @property
     def dimensions_yx(self) -> Tuple[int, int]:
+        """
+        Returns Y and X dimensions of the plane
+
+        :rtype: Tuple[int, int]
+        """
         return (_nc_direct_get_dim_y(self._nc_direct),
                 _nc_direct_get_dim_x(self._nc_direct))
 
     @property
     def cursor_enabled(self) -> Optional[bool]:
+        """
+        Is the cursor enabled?
+
+        :rtype: bool
+        """
         return self._is_cursor_enabled
 
     @cursor_enabled.setter
     def cursor_enabled(self, set_to_what: Optional[bool]) -> None:
+        """
+        Set the cursor to enabled or disabled by assigning boolean
+        """
         self._is_cursor_enabled = set_to_what
         if set_to_what:
             _nc_direct_enable_cursor(self._nc_direct)
