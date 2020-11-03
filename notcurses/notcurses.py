@@ -459,6 +459,9 @@ class NcDirect:
             self.stop()
 
     def start(self) -> None:
+        """
+        Start NcDirect.
+        """
         _nc_direct_init(self._nc_direct)
         self._has_started = True
 
@@ -474,7 +477,9 @@ class NcDirect:
             self, string: str,
             nc_channels: Optional[NcChannels] = None) -> int:
         """
-        Puts a string on the plane
+        Puts a string on the plane.
+        This will immideatly take effect. There is not `render` function for
+        NcDirect.
 
         :param Optional[NcChannels] nc_channels: The colors string will use
         :returns: Number of characters written.
