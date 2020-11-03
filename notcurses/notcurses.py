@@ -19,7 +19,7 @@ Notcurses python module
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import Dict, Optional, Tuple, Iterable
+from typing import Dict, Iterable, Optional, Tuple, Union
 
 from . import _notcurses
 from ._notcurses import (_nc_channels_set_background_rgb,
@@ -143,16 +143,16 @@ class NcInput:
         self._nc_input = nc_input
 
     @property
-    def code(self) -> str:
+    def code(self) -> Union[str, NcInputCodes]:
         """
-        Either a single character or a string with an input key name
+        Either a single character or an enum of :py:class:`NcInputCodes`
 
         For example, `q` represents a button Q on keyboard.
-        `mouse_left_button` represents left mouse button click.
+        `NcInputCodes.MOUSE_LEFT_BUTTON` represents left mouse button click.
 
-        The keys refrences can be found in :py:obj:`NC_INPUT_KEYS`
+        The keys refrences can be found in :py:class:`NcInputCodes`
 
-        :rtype: str
+        :rtype: Union[str, NcInputCodes]
         """
         try:
             return NC_INPUT_CODES[self._nc_input.codepoint]
@@ -460,57 +460,60 @@ class NcDirect:
             _nc_direct_disable_cursor(self._nc_direct)
 
 
-NC_INPUT_KEYS: Dict[str, int] = {
-    'invalid': _notcurses.NCKEY_INVALID,
-    'up': _notcurses.NCKEY_UP,
-    'resize': _notcurses.NCKEY_RESIZE,
-    'right': _notcurses.NCKEY_RIGHT,
-    'down': _notcurses.NCKEY_DOWN,
-    'left': _notcurses.NCKEY_LEFT,
-    'insert': _notcurses.NCKEY_INS,
-    'delete': _notcurses.NCKEY_DEL,
-    'backspace': _notcurses.NCKEY_BACKSPACE,
-    'page_down': _notcurses.NCKEY_PGDOWN,
-    'page_up': _notcurses.NCKEY_PGUP,
-    'home': _notcurses.NCKEY_HOME,
-    'ebd': _notcurses.NCKEY_END,
-    'f0': _notcurses.NCKEY_F00,
-    'f1': _notcurses.NCKEY_F01,
-    'f2': _notcurses.NCKEY_F02,
-    'f3': _notcurses.NCKEY_F03,
-    'f4': _notcurses.NCKEY_F04,
-    'f5': _notcurses.NCKEY_F05,
-    'f6': _notcurses.NCKEY_F06,
-    'f7': _notcurses.NCKEY_F07,
-    'f8': _notcurses.NCKEY_F08,
-    'f9': _notcurses.NCKEY_F09,
-    'f10': _notcurses.NCKEY_F10,
-    'f11': _notcurses.NCKEY_F11,
-    'f12': _notcurses.NCKEY_F12,
-    'enter': _notcurses.NCKEY_ENTER,
-    'caps_locl': _notcurses.NCKEY_CLS,
-    'down_left': _notcurses.NCKEY_DLEFT,
-    'down_right': _notcurses.NCKEY_DRIGHT,
-    'up_left': _notcurses.NCKEY_ULEFT,
-    'up_right': _notcurses.NCKEY_URIGHT,
-    'center': _notcurses.NCKEY_CENTER,
-    'begin': _notcurses.NCKEY_BEGIN,
-    'cancel': _notcurses.NCKEY_CANCEL,
-    'close': _notcurses.NCKEY_CLOSE,
-    'command': _notcurses.NCKEY_COMMAND,
-    'copy': _notcurses.NCKEY_COPY,
-    'exit': _notcurses.NCKEY_EXIT,
-    'print': _notcurses.NCKEY_PRINT,
-    'refresh': _notcurses.NCKEY_REFRESH,
-    'mouse_left_button': _notcurses.NCKEY_BUTTON1,
-    'mouse_middle_button': _notcurses.NCKEY_BUTTON2,
-    'mouse_right_button': _notcurses.NCKEY_BUTTON3,
-    'mouse_scroll_up': _notcurses.NCKEY_SCROLL_UP,
-    'mouse_scroll_down': _notcurses.NCKEY_SCROLL_DOWN,
-    'mouse_6': _notcurses.NCKEY_BUTTON6,
-    'mouse_release': _notcurses.NCKEY_RELEASE,
-}
+class NcInputCodes(IntEnum):
+    """
+    Enum containing special keys mapping
+    """
+    INVALID = _notcurses.NCKEY_INVALID
+    UP = _notcurses.NCKEY_UP
+    RESIZE = _notcurses.NCKEY_RESIZE
+    RIGHT = _notcurses.NCKEY_RIGHT
+    DOWN = _notcurses.NCKEY_DOWN
+    LEFT = _notcurses.NCKEY_LEFT
+    INSERT = _notcurses.NCKEY_INS
+    DELETE = _notcurses.NCKEY_DEL
+    BACKSPACE = _notcurses.NCKEY_BACKSPACE
+    PAGE_DOWN = _notcurses.NCKEY_PGDOWN
+    PAGE_UP = _notcurses.NCKEY_PGUP
+    HOME = _notcurses.NCKEY_HOME
+    EBD = _notcurses.NCKEY_END
+    F0 = _notcurses.NCKEY_F00
+    F1 = _notcurses.NCKEY_F01
+    F2 = _notcurses.NCKEY_F02
+    F3 = _notcurses.NCKEY_F03
+    F4 = _notcurses.NCKEY_F04
+    F5 = _notcurses.NCKEY_F05
+    F6 = _notcurses.NCKEY_F06
+    F7 = _notcurses.NCKEY_F07
+    F8 = _notcurses.NCKEY_F08
+    F9 = _notcurses.NCKEY_F09
+    F10 = _notcurses.NCKEY_F10
+    F11 = _notcurses.NCKEY_F11
+    F12 = _notcurses.NCKEY_F12
+    ENTER = _notcurses.NCKEY_ENTER
+    CAPS_LOCL = _notcurses.NCKEY_CLS
+    DOWN_LEFT = _notcurses.NCKEY_DLEFT
+    DOWN_RIGHT = _notcurses.NCKEY_DRIGHT
+    UP_LEFT = _notcurses.NCKEY_ULEFT
+    UP_RIGHT = _notcurses.NCKEY_URIGHT
+    CENTER = _notcurses.NCKEY_CENTER
+    BEGIN = _notcurses.NCKEY_BEGIN
+    CANCEL = _notcurses.NCKEY_CANCEL
+    CLOSE = _notcurses.NCKEY_CLOSE
+    COMMAND = _notcurses.NCKEY_COMMAND
+    COPY = _notcurses.NCKEY_COPY
+    EXIT = _notcurses.NCKEY_EXIT
+    PRINT = _notcurses.NCKEY_PRINT
+    REFRESH = _notcurses.NCKEY_REFRESH
+    MOUSE_LEFT_BUTTON = _notcurses.NCKEY_BUTTON1
+    MOUSE_MIDDLE_BUTTON = _notcurses.NCKEY_BUTTON2
+    MOUSE_RIGHT_BUTTON = _notcurses.NCKEY_BUTTON3
+    MOUSE_SCROLL_UP = _notcurses.NCKEY_SCROLL_UP
+    MOUSE_SCROLL_DOWN = _notcurses.NCKEY_SCROLL_DOWN
+    MOUSE_6 = _notcurses.NCKEY_BUTTON6
+    MOUSE_RELEASE = _notcurses.NCKEY_RELEASE
 
-NC_INPUT_CODES: Dict[int, str] = {
-    value: key for key, value in NC_INPUT_KEYS.items()
+
+NC_INPUT_CODES: Dict[int, NcInputCodes] = {
+    element.value: element for element in NcInputCodes
 }

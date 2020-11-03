@@ -28,7 +28,7 @@ while True:
     # Get an input event and print its properties
     p = std_plane.context.get_input_blocking()
     std_plane.erase()
-    std_plane.putstr(f"Code point: {p.code}",
+    std_plane.putstr(f"Code point: {repr(p.code)}",
                      y_pos=0, x_pos=0)
     std_plane.putstr(f"Y pos: {p.y_pos}", y_pos=1, x_pos=0)
     std_plane.putstr(f"X pos: {p.x_pos}", y_pos=2, x_pos=0)
