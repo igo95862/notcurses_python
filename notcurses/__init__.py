@@ -15,7 +15,10 @@
 # limitations under the License.
 
 from ._notcurses import get_notcurses_version
-from .notcurses import NcDirect, NcPlane, get_std_plane, NcChannels
+from .notcurses import (NcAlign, NcChannels, NcDirect, NcInput, NcInputCodes,
+                        NcPlane, NotcursesContext, get_std_plane)
 
-__all__ = ['NcPlane', 'get_std_plane',
-           'get_notcurses_version', 'NcDirect', 'NcChannels']
+__all__ = [
+    'NcPlane', 'get_std_plane', 'NcAlign', 'NcInput', 'NcInputCodes',
+    'get_notcurses_version', 'NcDirect', 'NcChannels', 'NotcursesContext'
+]
