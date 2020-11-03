@@ -446,7 +446,8 @@ class NcDirect:
         """
         Create the main direct plane.
 
-        :param bool start_immideatly: Whether or not to acquire the terminal
+        :param bool start_immideatly: Whether or not to start NcDirect on
+            initialization.
         """
         self._nc_direct = _NcDirect()
         self._is_cursor_enabled: Optional[bool] = None
@@ -467,7 +468,7 @@ class NcDirect:
 
     def stop(self) -> None:
         """
-        Stop Notcurses
+        Stop NcDirect
 
         Will be automatically called if NcDirect object gets garbage collected
         """
@@ -509,15 +510,15 @@ class NcDirect:
         """
         Is the cursor enabled?
 
+        Assign boolean to enable or disable cursor.
+
+        :type: bool
         :rtype: bool
         """
         return self._is_cursor_enabled
 
     @cursor_enabled.setter
     def cursor_enabled(self, set_to_what: Optional[bool]) -> None:
-        """
-        Set the cursor to enabled or disabled by assigning boolean
-        """
         self._is_cursor_enabled = set_to_what
         if set_to_what:
             _nc_direct_enable_cursor(self._nc_direct)
