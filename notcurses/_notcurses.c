@@ -701,7 +701,7 @@ _nc_plane_putstr(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-_nc_plane_putstr_alligned(PyObject *self, PyObject *args)
+_nc_plane_putstr_aligned(PyObject *self, PyObject *args)
 {
     NcPlaneObject *nc_plane_ref = NULL;
     int y_pos = -1;
@@ -712,7 +712,7 @@ _nc_plane_putstr_alligned(PyObject *self, PyObject *args)
                           &string,
                           &y_pos, &align))
     {
-        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_putstr_alligned arguments");
+        PyErr_SetString(PyExc_RuntimeError, "Failed to parse _nc_plane_putstr_aligned arguments");
         return NULL;
     }
 
@@ -848,7 +848,7 @@ static PyMethodDef NotcursesMethods[] = {
     {"_nc_plane_set_background_rgb", (PyCFunction)_nc_plane_set_background_rgb, METH_VARARGS, NULL},
     {"_nc_plane_set_foreground_rgb", (PyCFunction)_nc_plane_set_foreground_rgb, METH_VARARGS, NULL},
     {"_nc_plane_putstr", (PyCFunction)_nc_plane_putstr, METH_VARARGS, NULL},
-    {"_nc_plane_putstr_alligned", (PyCFunction)_nc_plane_putstr_alligned, METH_VARARGS, NULL},
+    {"_nc_plane_putstr_aligned", (PyCFunction)_nc_plane_putstr_aligned, METH_VARARGS, NULL},
     {"_nc_plane_dimensions_yx", (PyCFunction)_nc_plane_dimensions_yx, METH_VARARGS, NULL},
     {"_nc_plane_polyfill_yx", (PyCFunction)_nc_plane_polyfill_yx, METH_VARARGS, NULL},
     {"_nc_plane_erase", (PyCFunction)_nc_plane_erase, METH_VARARGS, NULL},

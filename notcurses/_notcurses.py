@@ -165,7 +165,7 @@ def _nc_plane_putstr(
     ...
 
 
-def _nc_plane_putstr_alligned(
+def _nc_plane_putstr_aligned(
         nc_plane: _NcPlane, string: str,
         y_pos: int, align: int, /) -> int:
     ...

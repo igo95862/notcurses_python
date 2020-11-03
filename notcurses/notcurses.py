@@ -29,7 +29,7 @@ from ._notcurses import (_nc_channels_set_background_rgb,
                          _nc_direct_init, _nc_direct_putstr, _nc_direct_stop,
                          _nc_plane_create, _nc_plane_dimensions_yx,
                          _nc_plane_erase, _nc_plane_putstr,
-                         _nc_plane_putstr_alligned,
+                         _nc_plane_putstr_aligned,
                          _nc_plane_set_background_rgb,
                          _nc_plane_set_foreground_rgb, _NcChannels, _NcDirect,
                          _NcInput, _NcPlane, _notcurses_context_cursor_disable,
@@ -70,15 +70,15 @@ class NotcursesContext:
     """
 
     def __init__(self,
-                 start_immideatly: bool = True):
+                 start_immediately: bool = True):
         """
         Create the context
 
-        :param bool start_immideatly: Whether or not to acquire the terminal
+        :param bool start_immediately: Whether or not to acquire the terminal
         """
         self._nc_context = _NotcursesContext()
         self._has_started = False
-        if start_immideatly:
+        if start_immediately:
             self.start()
 
     def render(self) -> None:
@@ -109,7 +109,7 @@ class NotcursesContext:
 
     def get_input_blocking(self) -> NcInput:
         """
-        Waits syncronosly for an :py:class:`NcInput` event.
+        Waits synchronously for an :py:class:`NcInput` event.
         """
         return NcInput(
             _notcurses_context_get_input_blocking(self._nc_context)
@@ -258,10 +258,10 @@ class NcPlane:
             x_pos,
         )
 
-    def putstr_alligned(self,
-                        string: str,
-                        y_pos: int = -1,
-                        align: NcAlign = NcAlign.UNALIGNED) -> int:
+    def putstr_aligned(self,
+                       string: str,
+                       y_pos: int = -1,
+                       align: NcAlign = NcAlign.UNALIGNED) -> int:
         """
         Puts a string on the plane with specified alignment
         instead of X coordinate
@@ -274,7 +274,7 @@ class NcPlane:
             Negative if some characters could not be written.
         :rtype: int
         """
-        return _nc_plane_putstr_alligned(
+        return _nc_plane_putstr_aligned(
             self._nc_plane,
             string,
             y_pos,
@@ -442,17 +442,17 @@ class NcDirect:
     """
 
     def __init__(self,
-                 start_immideatly: bool = True):
+                 start_immediately: bool = True):
         """
         Create the main direct plane.
 
-        :param bool start_immideatly: Whether or not to start NcDirect on
+        :param bool start_immediately: Whether or not to start NcDirect on
             initialization.
         """
         self._nc_direct = _NcDirect()
         self._is_cursor_enabled: Optional[bool] = None
         self._has_started = False
-        if start_immideatly:
+        if start_immediately:
             self.start()
 
     def __del__(self) -> None:
@@ -479,7 +479,7 @@ class NcDirect:
             nc_channels: Optional[NcChannels] = None) -> int:
         """
         Puts a string on the plane.
-        This will immideatly take effect. There is not `render` function for
+        This will immediately take effect. There is not `render` function for
         NcDirect.
 
         :param Optional[NcChannels] nc_channels: The colors string will use
