@@ -346,7 +346,7 @@ class NcPlane:
         :param int y_pos: top left corner Y coordinate
             relative to top left corner of parent
 
-        :param int y_pos: top left corner X coordinate
+        :param int x_pos: top left corner X coordinate
             relative to top left corner of parent
 
         :param int rows_num: Number of rows (i.e. Y size)
@@ -463,6 +463,55 @@ class NcDirect:
 class NcInputCodes(IntEnum):
     """
     Enum containing special keys mapping
+
+    :cvar INVALID:
+    :cvar UP:
+    :cvar RESIZE:
+    :cvar RIGHT:
+    :cvar DOWN:
+    :cvar LEFT:
+    :cvar INSERT:
+    :cvar DELETE:
+    :cvar BACKSPACE:
+    :cvar PAGE_DOWN:
+    :cvar PAGE_UP:
+    :cvar HOME:
+    :cvar EBD:
+    :cvar F0:
+    :cvar F1:
+    :cvar F2:
+    :cvar F3:
+    :cvar F4:
+    :cvar F5:
+    :cvar F6:
+    :cvar F7:
+    :cvar F8:
+    :cvar F9:
+    :cvar F10:
+    :cvar F11:
+    :cvar F12:
+    :cvar ENTER:
+    :cvar CAPS_LOCL:
+    :cvar DOWN_LEFT:
+    :cvar DOWN_RIGHT:
+    :cvar UP_LEFT:
+    :cvar UP_RIGHT:
+    :cvar CENTER:
+    :cvar BEGIN:
+    :cvar CANCEL:
+    :cvar CLOSE:
+    :cvar COMMAND:
+    :cvar COPY:
+    :cvar EXIT:
+    :cvar PRINT:
+    :cvar REFRESH:
+    :cvar MOUSE_LEFT_BUTTON:
+    :cvar MOUSE_MIDDLE_BUTTON:
+    :cvar MOUSE_RIGHT_BUTTON:
+    :cvar MOUSE_SCROLL_UP:
+    :cvar MOUSE_SCROLL_DOWN:
+    :cvar MOUSE_6:
+    :cvar MOUSE_RELEASE:
     """
     INVALID = _notcurses.NCKEY_INVALID
     UP = _notcurses.NCKEY_UP
